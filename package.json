@@ -22,18 +22,14 @@
     "email": "",
     "url": ""
   },
-  "contributors": [
-
-  ],
+  "contributors": [],
   "scripts": {
     "dev": "",
     "test": "",
-    "start": "npm run server.js" 
+    "start": "nodemon server.js"
   },
   "dependencies": {
-
-  },
-  "devDependencies": {
-
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
   }
 }

@@ -1,7 +1,8 @@
+import datalayer from '../Models/datalayer.js';
 
-
-const allBeers = (req, res) => {
-    res.send("Home page with list of favorite beers");
+const allBeers = async (req, res) => {
+    const allBeers = datalayer.getAllBeers();
+    res.send(allBeers);
 }
 
 export default{

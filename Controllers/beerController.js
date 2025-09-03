@@ -1,8 +1,8 @@
-import datalayer from '../Models/datalayer.js';
+import datalayer from '../models/datalayer.js';
 
 const allBeers = async (req, res) => {
-    const allBeers = datalayer.getAllBeers();
-    res.send(allBeers);
+    const allBeers = await datalayer.getAllBeers();
+    res.status(200).send(allBeers);
 }
 
 export default{

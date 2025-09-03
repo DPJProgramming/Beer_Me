@@ -1,5 +1,5 @@
 import express from "express";
-import controller from "../Controllers/beerController.js";
+import controller from "../controllers/beerController.js";
 
 const router = express.Router();
 router.get("/", controller.allBeers);

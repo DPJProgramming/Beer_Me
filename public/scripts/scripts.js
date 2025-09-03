@@ -3,20 +3,15 @@ window.onload = async () => {
         method:"get",
         mode: "cors"
     }
-    try {
-        console.log("trying fetch request");
-        const response = await fetch('/', config);
-    }   
-    catch (error) {
-        const response = error.response;
-    }    
-    console.log(JSON.stringify(response));
-    displayBeers(await response.json());
+    const response = await fetch('/beer', config);
+    const beers = await response.json();
+    displayBeers(beers);
 }
 
 function displayBeers(beers){
-    const ul = document.querySelector('.favorite-beers');
-    
+    const ul = document.getElementById('favorite-beers');
+    ul.innerHTML = "";
+
     beers.forEach(beer => {
         const name = beer.name;
         const image = "./img/" + `${name}`;

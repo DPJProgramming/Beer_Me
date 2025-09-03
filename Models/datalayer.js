@@ -1,7 +1,8 @@
 import fs from 'fs';
 
-const getAllBeers = () => {
-    const beers = fs.readdirSync("./public/img/").map(file => {
+const getAllBeers = async () => {
+    const files = await fs.readdirSync("./public/img/");
+    const beers = files.map(file => {
         return {
             name: file,
             image: `../public/img/${file}`

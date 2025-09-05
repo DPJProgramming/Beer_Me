@@ -14,7 +14,7 @@ function displayBeers(beers){
 
     beers.forEach(beer => {
         const name = beer.name;
-        const image = "./img/" + `${name}`;
+        const image = "./img/" + `${beer.image}`;
 
         const li = document.createElement("li");
 

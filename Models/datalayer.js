@@ -1,4 +1,7 @@
 import fs from 'fs';
+import Database from 'better-sqlite3';
+
+const db = new Database('./data/beer.db', { verbose: console.log });
 
 const getAllBeers = async () => {
     const files = await fs.readdirSync("./public/img/");

@@ -2,7 +2,7 @@
 --DELETE FROM beers
 
 --select all entries
---SELECT * FROM beers
+SELECT * FROM beers
 
 --select only certain type
 --SELECT * FROM beers WHERE type = 'porter' 

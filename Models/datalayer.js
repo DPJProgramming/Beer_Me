@@ -10,6 +10,11 @@ const getAllBeers = async () => {
     return allBeers;
 }
 
+const addBeer = async (beer) => {
+
+}
+
 export default {
-    getAllBeers
+    getAllBeers,
+    addBeer
 }

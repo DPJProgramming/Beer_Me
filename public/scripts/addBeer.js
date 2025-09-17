@@ -13,17 +13,17 @@ function getNewBeerInfo(event){
     const location = document.getElementById("location").value;
     const rating = document.getElementById("rating").value;
     const image = document.getElementById("image").value;
-    const date = Date.now();
+    const date = new Date().toISOString().slice(0, 10);
 
     const beer = {
-        name: name,
-        type: type,
-        brewery: brewery,
-        description: description,
-        location: location,
-        rating: rating,
-        image: image,
-        date: date
+        "name": name,
+        "type": type,
+        "brewery": brewery,
+        "description": description,
+        "location": location,
+        "rating": rating,
+        "image": image,
+        "date": date
     }
 
     addBeer(beer);
@@ -33,9 +33,12 @@ function addBeer(beer){
     const config = {
         method:"post",
         mode: "cors",
-        data: beer
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(beer)
     }
-    const response = fetch('/addBeer', config, beer);
+    const response = fetch('/addBeer', config);
 
     //TO DO:
     //handle response

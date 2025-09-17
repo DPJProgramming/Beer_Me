@@ -6,7 +6,7 @@ const allBeers = async (req, res) => {
 }
 
 const addBeer = async (req, res) => {
-    const beer = req.body();
+    const beer = req.body;
     const result = datalayer.addBeer(beer);
 
     //TO DO:

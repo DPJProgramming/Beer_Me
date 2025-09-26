@@ -6,9 +6,8 @@ const app = express();
 
 app.use(cors({origin: "*"}));
 app.use(express.json());
-app.use("/beer", beerRouter);
+app.use('/', beerRouter);
 app.use(express.static('./public/'));
-
 
 app.use((req, res) => {
     res.status(404).send("Page not found");

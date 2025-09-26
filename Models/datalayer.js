@@ -10,6 +10,17 @@ const getAllBeers = async () => {
     return allBeers;
 }
 
+const addBeer = async (beer) => {
+    console.log("in datalayer");
+    const query = `INSERT INTO beers (name, type, brewery, description, location, rating, image, date)
+                   VALUES (?,?,?,?,?,?,?,?)`;
+    const prepare = db.prepare(query)
+    const result = prepare.run(beer.name, beer.type, beer.brewery, beer.description, beer.location, beer.rating, beer.image, beer.date);
+    console.log("done");   
+    return result;   
+}
+
 export default {
-    getAllBeers
+    getAllBeers,
+    addBeer
 }

@@ -8,7 +8,6 @@ app.use(cors({origin: "*"}));
 app.use(express.json());
 app.use('/', beerRouter);
 app.use(express.static('./public/'));
-console.log("Middleware and routes have been set up.");
 
 app.use((req, res) => {
     res.status(404).send("Page not found");

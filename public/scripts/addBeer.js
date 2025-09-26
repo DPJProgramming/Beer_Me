@@ -1,44 +1,30 @@
 window.onload = function() {
     const form = document.getElementById("newBeerForm");
-    form.addEventListener("submit", getNewBeerInfo);
+    
+    //currently disabled as form is sent directly to backend via form action attribute
+    //form.addEventListener("submit", getNewBeerInfo); 
 }
 
 function getNewBeerInfo(event){
     event.preventDefault();
 
-    const name = document.getElementById("name").value;
-    const type = document.getElementById("type").value;
-    const brewery = document.getElementById("brewery").value;
-    const description = document.getElementById("description").value;
-    const location = document.getElementById("location").value;
-    const rating = document.getElementById("rating").value;
-    const image = document.getElementById("image").value;
-    const date = new Date().toISOString().slice(0, 10);
+    //get form info
+    const newBeer = new FormData(event.target);
 
-    const beer = {
-        "name": name,
-        "type": type,
-        "brewery": brewery,
-        "description": description,
-        "location": location,
-        "rating": rating,
-        "image": image,
-        "date": date
-    }
-
-    addBeer(beer);
+    //send beer to backend
+    addBeer(newBeer);
 }
 
-function addBeer(beer){
+async function addBeer(newBeer){
+    //prepare beer
     const config = {
         method:"post",
         mode: "cors",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(beer)
+        body: newBeer
     }
-    const response = fetch('/addBeer', config);
+    const response = await fetch('/addBeer', config);
+
+    console.log(response);
 
     //TO DO:
     //handle response

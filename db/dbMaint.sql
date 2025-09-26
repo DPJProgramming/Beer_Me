@@ -1,5 +1,5 @@
 --deletes all entries in table
---DELETE FROM beers
+--DELETE FROM beers WHERE name = 'Chicken';
 
 --select all entries
 SELECT * FROM beers

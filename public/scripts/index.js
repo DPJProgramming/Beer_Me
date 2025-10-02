@@ -14,12 +14,12 @@ function displayBeers(beers){
 
     beers.forEach(beer => {
         //create elements
-        const name = document.createElement("span");
+        const name = document.createElement("h3");
         name.innerText = beer.name;
         name.setAttribute("id", beer.id);
 
         const image = document.createElement("img");
-        image.src = beer.image;
+        image.src = `img/${beer.image}` ;
         image.alt = beer.name;
 
         const rating = document.createElement("span");
@@ -40,30 +40,27 @@ function displayBeers(beers){
         const date = document.createElement("span");
         date.innerText = `Added on: ${beer.date}`;
 
-        const form = document.createElement("form");
-        form.setAttribute("id", "editBeerForm");
-        form.setAttribute("action", "/editBeer");
-        form.setAttribute("method", "post");
-        form.setAttribute("enctype", "multipart/form-data");
+        const edit = document.createElement("a");
+        edit.href = `/editBeer.html?id=${beer.id}`;
+        edit.innerText = "Modify";
 
-        const edit = document.createElement("button");
-        edit.innerText = "Edit";
-        edit.setAttribute("type", "submit");
-        edit.setAttribute("form", "editBeerForm");
-        edit.setAttribute("value", beer.id);
+        const form = document.createElement("form");
+
+        const br = document.createElement("br");
 
         //append elements
         const li = document.createElement("li");
-        li.appendChild(image);
         li.appendChild(name);
         li.appendChild(rating);
+        li.appendChild(image);
         li.appendChild(description);
         li.appendChild(brewery);
         li.appendChild(type);
         li.appendChild(location);
         li.appendChild(date);
-        
-        form.appendChild(edit);
+        li.appendChild(form);
+        li.appendChild(edit);
+        li.appendChild(br);
 
         li.setAttribute("class", "beer-item");
 

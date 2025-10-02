@@ -15,6 +15,7 @@ function getNewBeerInfo(event){
     addBeer(newBeer);
 }
 
+//currently not used as form is sent directly to backend via form action attribute
 async function addBeer(newBeer){
     //prepare beer
     const config = {

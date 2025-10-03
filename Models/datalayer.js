@@ -50,34 +50,61 @@ const getBeerById = (id) => {
 }
 
 const editBeer = (beer) => {
-    console.log(beer.id);
-    const query = `UPDATE beers 
-                   SET 
-                    name = ?, 
-                    type = ?, 
-                    brewery = ?, 
-                    description = ?, 
-                    location = ?, 
-                    rating = ?, 
-                    image = ?, 
-                    date = ?
+    let result;
 
-                   WHERE id = ?`;
+    //check if user has defined a new image
+    if(beer.image){
+        const query = `UPDATE beers 
+                    SET 
+                        name = ?, 
+                        type = ?, 
+                        brewery = ?, 
+                        description = ?, 
+                        location = ?, 
+                        rating = ?, 
+                        image = ?, 
+                        date = ?
 
-    //console.log(beer.name, beer.type, beer.brewery, beer.description, beer.location, beer.rating, beer.image, beer.date, beer.id);
+                    WHERE id = ?`;
 
+        const prepare = db.prepare(query);
+        result = prepare.run(
+                                    beer.name, 
+                                    beer.type, 
+                                    beer.brewery, 
+                                    beer.description, 
+                                    beer.location, 
+                                    beer.rating, 
+                                    beer.image, 
+                                    beer.date, 
+                                    beer.id);
+    }
+    else{
+        const query = 
+                    `UPDATE 
+                        beers 
+                    SET 
+                        name = ?, 
+                        type = ?, 
+                        brewery = ?, 
+                        description = ?, 
+                        location = ?, 
+                        rating = ?,  
+                        date = ?
 
-    const prepare = db.prepare(query);
-    const result = prepare.run(
-                                beer.name, 
-                                beer.type, 
-                                beer.brewery, 
-                                beer.description, 
-                                beer.location, 
-                                beer.rating, 
-                                beer.image, 
-                                beer.date, 
-                                beer.id);
+                    WHERE id = ?`;
+
+        const prepare = db.prepare(query);
+        result = prepare.run(
+                                    beer.name, 
+                                    beer.type, 
+                                    beer.brewery, 
+                                    beer.description, 
+                                    beer.location, 
+                                    beer.rating, 
+                                    beer.date, 
+                                    beer.id);
+    }
 
     return result;
 }

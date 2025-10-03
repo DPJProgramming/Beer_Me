@@ -25,9 +25,6 @@ async function fillFormData(beerId) {
         }
         
         const beer = await response.json();
-
-        console.log("retrieving beer data");
-        console.log(beer);
         
         // Populate form fields with existing data
         document.getElementById('beerId').value = beer.id || '';
@@ -38,14 +35,7 @@ async function fillFormData(beerId) {
         document.getElementById('location').value = beer.location || '';
         document.getElementById('rating').value = beer.rating || '';
         document.getElementById('date').value = beer.date || '';
-        
-        // Add hidden input for beer ID
-        // const hiddenId = document.createElement('input');
-        // hiddenId.type = 'hidden';
-        // hiddenId.name = 'beerId';
-        // hiddenId.value = beerId;
-        // document.getElementById('editBeerForm').appendChild(hiddenId);
-        
+
         // Update submit button text
         document.getElementById('submit').value = 'Update Beer';
         

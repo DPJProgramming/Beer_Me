@@ -28,10 +28,12 @@ const getBeer = (req, res) => {
 
 const editBeer = (req, res) => {
     const beer = req.body;
-    beer.image = req.file ? req.file.filename : "placeholder.png";
+
+    if(req.file){
+        beer.image = req.file.filename;
+    }
 
     const result = datalayer.editBeer(beer);
-
     res.send(result);
 }
 

@@ -34,7 +34,12 @@ const editBeer = (req, res) => {
     }
 
     const result = datalayer.editBeer(beer);
-    res.send(result);
+
+    if(!result){
+        res.status(404).send('Beer not found');
+    } else {
+        res.redirect(`./editBeer.html?id=${result.id}`);
+    }
 }
 
 export default{

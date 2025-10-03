@@ -7,6 +7,7 @@ window.onload = async () => {
     //currently unused as form is sent directly to backend via form action attribute
     // const editForm = document.getElementById('editBeerForm');
     // editForm.addEventListener('submit', submitEditBeer);
+    editForm.addEventListener('submit', alertEdit);
 }
 
 async function fillFormData(beerId) {
@@ -34,6 +35,7 @@ async function fillFormData(beerId) {
         document.getElementById('description').value = beer.description || '';
         document.getElementById('location').value = beer.location || '';
         document.getElementById('rating').value = beer.rating || '';
+        document.getElementById('currentImage').src = `img/${beer.image}` || 'img/placeholder.png';
         document.getElementById('date').value = beer.date || '';
 
         // Update submit button text
@@ -66,3 +68,8 @@ async function submitEditBeer(event) {
 
     const result = await fetch('/editBeer', beerId);
 };
+
+function alertEdit(){
+    alert("Beer updated!");
+    window.location.href = './editBeer.html';
+}

@@ -8,42 +8,49 @@ const allBeers = async (req, res) => {
 }
 
 const addBeer = async (req, res) => {
-
-    console.log("reaeched controller");
-
     const beer = req.body;
     beer.image = req.file ? req.file.filename : "placeholder.png";
 
-    console.log("Request body:", beer);
-    console.log("Uploaded file:", req.file);
-
-    const response = await datalayer.addBeer(beer);
-
-    // console.log("Form data:", req.body);
-    // console.log("File info:", req.file);
-
-    // const beer = req.body;
+    const result = await datalayer.addBeer(beer);
     
-    // const newBeer = {
-    //     name: beer.name,
-    //     type: beer.type,
-    //     brewery: beer.brewery,
-    //     description: beer.description,
-    //     location: beer.location,
-    //     rating: beer.rating,
-    //     image: req.file ? req.file.filename : "placeholder.png",
-    //     date: new Date().toISOString().slice(0, 10)
-    // };
-    
-    // const result = datalayer.addBeer(newBeer);
-
     //TO DO:
     //validation
 
-    res.send(response);
+    res.send(result);
+}
+
+const getBeer = (req, res) => {
+    const beerId = req.params.id;
+    const result = datalayer.getBeerById(beerId);
+
+    res.send(result);
+}
+
+const editBeer = (req, res) => {
+    const beer = req.body;
+
+    //update date to current date
+    beer.date = new Date().toISOString().split('T')[0]; 
+
+    //check if new image is provided
+    if(req.file){
+        beer.image = req.file.filename;
+    }
+
+    //send to datalayer
+    const result = datalayer.editBeer(beer);
+
+    //handle response
+    if(!result){
+        res.status(404).send('Update Beer failed');
+    } else {
+        res.send(result);
+    }
 }
 
 export default{
     allBeers,
     addBeer,
+    getBeer,
+    editBeer
 }

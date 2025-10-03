@@ -23,5 +23,7 @@ const upload = multer({ dest: 'public/img/' });
 
 router.get("/beer", controller.allBeers);
 router.post("/addBeer", upload.single("image"), controller.addBeer);
+router.get("/getBeer/:id", controller.getBeer);
+router.post("/editBeer", upload.single("image"), controller.editBeer);
 
 export default router;

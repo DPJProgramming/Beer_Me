@@ -29,16 +29,22 @@ const getBeer = (req, res) => {
 const editBeer = (req, res) => {
     const beer = req.body;
 
+    //update date to current date
+    beer.date = new Date().toISOString().split('T')[0]; 
+
+    //check if new image is provided
     if(req.file){
         beer.image = req.file.filename;
     }
 
+    //send to datalayer
     const result = datalayer.editBeer(beer);
 
+    //handle response
     if(!result){
-        res.status(404).send('Beer not found');
+        res.status(404).send('Update Beer failed');
     } else {
-        res.redirect(`./editBeer.html?id=${result.id}`);
+        res.send(result);
     }
 }
 

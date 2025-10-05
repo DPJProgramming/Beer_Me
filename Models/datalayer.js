@@ -109,10 +109,13 @@ const editBeer = (beer) => {
     return result;
 }
 
-const deleteBeer = (id) => {
+const deleteBeer = async (id) => {
     //handle deletion of image file
-    // const image = getImageById(id);
-    // fs.unlink(`./public/img/${image}`);
+    const image = getImageById(id);
+
+    if(image != 'placeholder.png'){ 
+        await fs.promises.unlink(`./public/img/${image}`);
+    }
 
     //delete beer from database
     const query = `DELETE FROM beers WHERE id = ?`;
@@ -126,9 +129,9 @@ const deleteBeer = (id) => {
 const getImageById = (id) => {
     const query = `SELECT image FROM beers WHERE id = ?`
     const prepare = db.prepare(query);
-    const image = prepare.run(id);
+    const image = prepare.get(id);
 
-    return image; 
+    return image ? image.image : null;
 }
 
 export default {

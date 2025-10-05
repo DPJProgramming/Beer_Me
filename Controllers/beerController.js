@@ -48,9 +48,9 @@ const editBeer = (req, res) => {
     }
 }
 
-const deleteBeer = (req, res) => {
+const deleteBeer = async (req, res) => {
     const id = req.params.id;
-    const response = datalayer.deleteBeer(id);
+    const response = await datalayer.deleteBeer(id);
     res.send(response);
 }
 

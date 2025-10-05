@@ -48,9 +48,16 @@ const editBeer = (req, res) => {
     }
 }
 
+const deleteBeer = (req, res) => {
+    const id = req.params.id;
+    const response = datalayer.deleteBeer(id);
+    res.send(response);
+}
+
 export default{
     allBeers,
     addBeer,
     getBeer,
-    editBeer
+    editBeer,
+    deleteBeer
 }

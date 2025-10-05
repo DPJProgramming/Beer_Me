@@ -109,9 +109,35 @@ const editBeer = (beer) => {
     return result;
 }
 
+const deleteBeer = async (id) => {
+    //handle deletion of image file
+    const image = getImageById(id);
+
+    if(image != 'placeholder.png'){ 
+        await fs.promises.unlink(`./public/img/${image}`);
+    }
+
+    //delete beer from database
+    const query = `DELETE FROM beers WHERE id = ?`;
+
+    const prepare = db.prepare(query);
+    const runDelete = prepare.run(id);
+
+    return runDelete;
+}
+
+const getImageById = (id) => {
+    const query = `SELECT image FROM beers WHERE id = ?`
+    const prepare = db.prepare(query);
+    const image = prepare.get(id);
+
+    return image ? image.image : null;
+}
+
 export default {
     getAllBeers,
     addBeer,
     getBeerById,
-    editBeer
+    editBeer,
+    deleteBeer
 }

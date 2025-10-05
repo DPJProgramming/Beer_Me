@@ -44,8 +44,31 @@ function displayBeers(beers){
         edit.href = `/editBeer.html?id=${beer.id}`;
         edit.innerText = "Modify";
 
-        const form = document.createElement("form");
+        //create delete form elements and handle click
+        const deleteBeer = document.createElement("input");
+        deleteBeer.type = "submit";
+        deleteBeer.value = "Delete";
+        deleteBeer.name = "delete";
 
+        const id = document.createElement("input");
+        id.type = "hidden";
+        id.name = "id";
+        id.value = beer.id;
+
+        const deleteForm = document.createElement("form");
+        deleteForm.appendChild(deleteBeer);
+        deleteForm.appendChild(id);
+        deleteForm.method = "POST";
+        deleteForm.action = `/deleteBeer/${beer.id}`;
+
+        deleteBeer.onclick = function(event) {
+            event.preventDefault();
+            if(confirm(`Are you sure you want to delete ${beer.name}?`)){
+                deleteForm.submit();
+            }
+        };
+
+        //line break
         const br = document.createElement("br");
 
         //append elements
@@ -58,8 +81,8 @@ function displayBeers(beers){
         li.appendChild(type);
         li.appendChild(location);
         li.appendChild(date);
-        li.appendChild(form);
         li.appendChild(edit);
+        li.appendChild(deleteForm);
         li.appendChild(br);
 
         li.setAttribute("class", "beer-item");

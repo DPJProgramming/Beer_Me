@@ -25,5 +25,6 @@ router.get("/beer", controller.allBeers);
 router.post("/addBeer", upload.single("image"), controller.addBeer);
 router.get("/getBeer/:id", controller.getBeer);
 router.post("/editBeer", upload.single("image"), controller.editBeer);
+router.post("/deleteBeer/:id", controller.deleteBeer);
 
 export default router;

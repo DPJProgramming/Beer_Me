@@ -21,7 +21,8 @@ const upload = multer({ dest: 'public/img/' });
     //add limits if needed
 //});
 
-router.get("/beer", controller.allBeers);
+router.get("/topBeers", controller.topBeers);
+router.get("/allBeers", controller.allBeers);
 router.post("/addBeer", upload.single("image"), controller.addBeer);
 router.get("/getBeer/:id", controller.getBeer);
 router.post("/editBeer", upload.single("image"), controller.editBeer);

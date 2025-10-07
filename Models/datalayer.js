@@ -14,6 +14,13 @@ const getAllBeers = async () => {
     return allBeers;
 }
 
+const getTopBeers = async () => {
+    const result = db.prepare('SELECT * FROM beers ORDER BY rating DESC LIMIT 10');
+    const topBeers = result.all();
+
+    return topBeers;
+}
+
 const addBeer = async (beer) => {
     const query = `INSERT INTO beers (
                                         name, 
@@ -139,5 +146,6 @@ export default {
     addBeer,
     getBeerById,
     editBeer,
-    deleteBeer
+    deleteBeer,
+    getTopBeers
 }

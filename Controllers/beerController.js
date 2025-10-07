@@ -7,6 +7,11 @@ const allBeers = async (req, res) => {
     res.status(200).send(allBeers);
 }
 
+const topBeers = async (req, res) => {
+    const topBeers = await datalayer.getTopBeers();
+    res.status(200).send(topBeers);
+}
+
 const addBeer = async (req, res) => {
     const beer = req.body;
     beer.image = req.file ? req.file.filename : "placeholder.png";
@@ -59,5 +64,6 @@ export default{
     addBeer,
     getBeer,
     editBeer,
-    deleteBeer
+    deleteBeer,
+    topBeers
 }

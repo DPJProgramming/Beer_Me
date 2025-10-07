@@ -6,6 +6,9 @@ window.onload = async () => {
     const response = await fetch('/topBeers', config);
     const beers = await response.json();
     displayBeers(beers);
+
+    const sort = document.getElementById("sort");
+    sort.onChange = () => sortBy(beers, sort.value);
 }
 
 function displayBeers(beers){
@@ -89,5 +92,27 @@ function displayBeers(beers){
 
         ul.appendChild(li);
     })
+}
+
+function sortBy(beers, sortOption){
+    let sortedBeers;
+
+    switch(sortOption){
+        case "name":
+            sortedBeers = beers.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+        case "rating":
+            sortedBeers = beers.sort((a, b) => b.rating - a.rating);
+            break;
+        case "date":
+            sortedBeers = beers.sort((a, b) => new Date(b.date) - new Date(a.date));
+            break;
+        default:
+            sortedBeers = beers;
+    }
+
+    const ul = document.getElementById('favorite-beers');
+    ul.innerHTML = "";
+    displayBeers(sortedBeers);
 }
 

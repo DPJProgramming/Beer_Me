@@ -3,13 +3,13 @@ window.onload = async () => {
         method:"get",
         mode: "cors"
     }
-    const response = await fetch('/topBeers', config);
+    const response = await fetch('/allBeers', config);
     const beers = await response.json();
     displayBeers(beers);
 }
 
 function displayBeers(beers){
-    const ul = document.getElementById('favorite-beers');
+    const ul = document.getElementById('all-beers');
     ul.innerHTML = "";
 
     beers.forEach(beer => {

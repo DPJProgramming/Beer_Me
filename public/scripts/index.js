@@ -4,8 +4,19 @@ window.onload = async () => {
         mode: "cors"
     }
     const response = await fetch('/topBeers', config);
+    if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     const beers = await response.json();
-    displayBeers(beers);
+
+    if (!beers || !Array.isArray(beers) || beers.length === 0) {
+        noBeerAlert();
+    }
+    else{
+        displayBeers(beers);
+    }
+    
 }
 
 function displayBeers(beers){
@@ -89,5 +100,12 @@ function displayBeers(beers){
 
         ul.appendChild(li);
     })
+}
+
+function noBeerAlert(){
+    const body = document.getElementById("favorite-beers");
+    const message = document.createElement("h3");
+    message.innerText = "NO BEERS!!!";
+    body.appendChild(message);
 }
 

@@ -6,6 +6,9 @@ window.onload = async () => {
     const response = await fetch('/allBeers', config);
     const beers = await response.json();
     displayBeers(beers);
+
+    const sort = document.getElementById("sort");
+    sort.onchange = () => sortBy(beers, sort.value);
 }
 
 function displayBeers(beers){
@@ -89,5 +92,34 @@ function displayBeers(beers){
 
         ul.appendChild(li);
     })
+}
+
+function sortBy(beers, sortOption){
+    let sortedBeers;
+
+    switch(sortOption){
+        case "name":
+            sortedBeers = beers.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+        case "rating": //default sort for home page
+            sortedBeers = beers.sort((a, b) => b.rating - a.rating);
+            break;
+        case "date asc":// default sort for myBeers page
+            sortedBeers = beers.sort((a, b) => new Date(a.date) - new Date(b.date));
+            break;
+        case "date desc":
+            sortedBeers = beers.sort((a, b) => new Date(b.date) - new Date(a.date));
+            break;
+        case "type":
+            sortedBeers = beers.sort((a, b) => a.type.localeCompare(b.type));
+            break;
+        case "brewery":
+            sortedBeers = beers.sort((a, b) => a.brewery.localeCompare(b.brewery));
+            break;
+        default:
+            sortedBeers = beers;
+    }
+
+    displayBeers(sortedBeers);
 }
 

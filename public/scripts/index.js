@@ -101,11 +101,17 @@ function sortBy(beers, sortOption){
         case "name":
             sortedBeers = beers.sort((a, b) => a.name.localeCompare(b.name));
             break;
-        case "rating":
+        case "rating": //default sort for home page
             sortedBeers = beers.sort((a, b) => b.rating - a.rating);
             break;
-        case "date":
+        case "date":// default sort for myBeers page
             sortedBeers = beers.sort((a, b) => new Date(b.date) - new Date(a.date));
+            break;
+        case "type":
+            sortedBeers = beers.sort((a, b) => a.type.localeCompare(b.type));
+            break;
+        case "brewery":
+            sortedBeers = beers.sort((a, b) => a.brewery.localeCompare(b.brewery));
             break;
         default:
             sortedBeers = beers;

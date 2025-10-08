@@ -8,7 +8,7 @@ const db = new Database('./data/beer.db');
 //const db = new Database('./data/beer.db', { verbose: console.log });
 
 const getAllBeers = async () => {
-    const result = db.prepare('SELECT * FROM beers');
+    const result = db.prepare('SELECT * FROM beers ORDER BY date DESC');
     const allBeers = result.all();
     
     return allBeers;

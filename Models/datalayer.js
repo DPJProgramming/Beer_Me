@@ -15,7 +15,7 @@ const getAllBeers = async () => {
 }
 
 const getTopBeers = async () => {
-    const result = db.prepare('SELECT * FROM beers ORDER BY rating DESC LIMIT 10');
+    const result = db.prepare('SELECT * FROM beers ORDER BY rating DESC');
     const topBeers = result.all();
 
     return topBeers;

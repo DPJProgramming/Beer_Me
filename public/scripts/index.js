@@ -14,7 +14,10 @@ window.onload = async () => {
         noBeerAlert();
     }
     else{
-        displayBeers(beers);
+        displayBeers(beers.filter((beer, i) => i < 10));
+
+        const search = document.getElementById("search");
+        search.addEventListener('input',() => searchFor(beers, search.value));
     }
     
 }
@@ -107,5 +110,24 @@ function noBeerAlert(){
     const message = document.createElement("h3");
     message.innerText = "NO BEERS!!!";
     body.appendChild(message);
+}
+
+function searchFor(beers, term){
+    let message = document.getElementById('searchMessage');
+    const searchTerm = term.toLowerCase().trim();
+
+    let filteredBeers = beers.filter((beer) => 
+                     beer.name.toLowerCase().startsWith(searchTerm)
+                  || beer.type.toLowerCase().startsWith(searchTerm)
+                  || beer.brewery.toLowerCase().startsWith(searchTerm));
+
+    if(filteredBeers.length === 0){
+        message.innerText = "No results";
+        document.getElementById('favorite-beers').innerHTML = "";
+    }
+    else{
+        message.innerText = ""
+        displayBeers(filteredBeers);
+    }
 }
 

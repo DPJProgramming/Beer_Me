@@ -130,16 +130,20 @@ function sortBy(beers, sortOption){
 }
 
 function searchFor(beers, term){
-    const searchFor = term.toLowerCase().trim();
+    let message = document.getElementById('searchMessage');
+    const searchTerm = term.toLowerCase().trim();
+    
     let filteredBeers = beers.filter((beer) => 
-                     beer.name.toLowerCase().includes(searchFor)
-                  || beer.type.toLowerCase().includes(searchFor)
-                  || beer.brewery.toLowerCase().includes(searchFor));
+                     beer.name.toLowerCase().startsWith(searchTerm)
+                  || beer.type.toLowerCase().startsWith(searchTerm)
+                  || beer.brewery.toLowerCase().startsWith(searchTerm));
 
     if(filteredBeers.length === 0){
-        displayBeers(beers);
+        message.innerText = "No results";
+        document.getElementById('all-beers').innerHTML = "";
     }
     else{
+        message.innerText = ""
         displayBeers(filteredBeers);
     }
 }

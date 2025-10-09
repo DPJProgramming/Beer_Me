@@ -1,4 +1,5 @@
 window.onload = async () => {
+    //fetch all beers from backend
     const config = {
         method:"get",
         mode: "cors"
@@ -7,8 +8,13 @@ window.onload = async () => {
     const beers = await response.json();
     displayBeers(beers);
 
+    //handle sorting
     const sort = document.getElementById("sort");
     sort.onchange = () => sortBy(beers, sort.value);
+
+    //handle searching
+    const search = document.getElementById("search");
+    search.addEventListener('input',() => searchFor(beers, search.value));
 }
 
 function displayBeers(beers){
@@ -121,5 +127,20 @@ function sortBy(beers, sortOption){
     }
 
     displayBeers(sortedBeers);
+}
+
+function searchFor(beers, term){
+    const searchFor = term.toLowerCase().trim();
+    let filteredBeers = beers.filter((beer) => 
+                     beer.name.toLowerCase().includes(searchFor)
+                  || beer.type.toLowerCase().includes(searchFor)
+                  || beer.brewery.toLowerCase().includes(searchFor));
+
+    if(filteredBeers.length === 0){
+        displayBeers(beers);
+    }
+    else{
+        displayBeers(filteredBeers);
+    }
 }
 

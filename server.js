@@ -12,4 +12,4 @@ app.use(express.static('./public/'));
 app.use((req, res) => {
     res.status(404).send("Page not found");
 })
-app.listen("3000", () => console.log("Listening on port 3000"));
+app.listen(3000, "0.0.0.0", () => console.log("Listening on port 3000"));

@@ -35,6 +35,12 @@ function displayBeers(beers){
         const image = document.createElement("img");
         image.src = `img/${beer.image}` ;
         image.alt = beer.name;
+        // Add these lines to constrain image size:
+        image.style.maxWidth = "200px";
+        image.style.maxHeight = "200px";
+        image.style.objectFit = "cover";  // Maintains aspect ratio while filling the space
+        image.style.display = "block";    // Makes image a block element
+        image.style.margin = "10px 0";    // Adds some spacing above/below
 
         const rating = document.createElement("span");
         rating.innerText = `Rating: ${beer.rating}/5`;
@@ -87,6 +93,12 @@ function displayBeers(beers){
 
         //append elements
         const li = document.createElement("li");
+        // Add these lines to constrain overall beer entry size:
+        li.style.maxWidth = "400px";      // Constrain overall width
+        li.style.border = "1px solid #ddd"; // Optional: visual boundary
+        li.style.padding = "15px";        // Optional: internal spacing
+        li.style.marginBottom = "20px";   // Space between beer entries
+
         li.appendChild(name);
         li.appendChild(rating);
         li.appendChild(image);

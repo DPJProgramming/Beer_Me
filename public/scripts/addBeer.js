@@ -1,8 +1,6 @@
-window.onload = function() {
+window.onload = function() {    
     const form = document.getElementById("newBeerForm");
-    
-    //currently disabled as form is sent directly to backend via form action attribute
-    //form.addEventListener("submit", getNewBeerInfo); 
+    form.addEventListener("submit", getNewBeerInfo); 
 }
 
 function getNewBeerInfo(event){
@@ -15,9 +13,7 @@ function getNewBeerInfo(event){
     addBeer(newBeer);
 }
 
-//currently not used as form is sent directly to backend via form action attribute
 async function addBeer(newBeer){
-    //prepare beer
     const config = {
         method:"post",
         mode: "cors",

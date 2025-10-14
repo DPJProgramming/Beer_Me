@@ -2,8 +2,6 @@ import express from "express";
 import controller from "../controllers/beerController.js";
 import multer from "multer";
 
-
-
 const router = express.Router();
 const upload = multer({ dest: 'public/img/' });
 

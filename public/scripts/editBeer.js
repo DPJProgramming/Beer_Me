@@ -1,17 +1,20 @@
 window.onload = async () => {
     
+    //get beer id from url
     const urlParams = new URLSearchParams(window.location.search);
     const beerId = urlParams.get('id');
-    fillFormData(beerId);
 
-    //currently unused as form is sent directly to backend via form action attribute
-    // const editForm = document.getElementById('editBeerForm');
-    // editForm.addEventListener('submit', submitEditBeer);
+    //prepare form submission handler
+    const editForm = document.getElementById('editBeerForm');
+    editForm.addEventListener('submit', submitEditBeer);
+
+    //fill initial form data
+    fillFormData(beerId);    
 }
 
 async function fillFormData(beerId) {
     if (!beerId) {
-        alert('No beer ID provided');
+        alert('Error: Can\'t find beer');
         window.location.href = './index.html';
         return;
     }
@@ -46,23 +49,27 @@ async function fillFormData(beerId) {
     }
 };
 
-//currently unused as form is sent directly to backend via form action attribute
 async function submitEditBeer(event) {
     event.preventDefault();
-
     const formData = new FormData(event.target);
 
-    const beer = 
-    {   
-        id : document.getElementById('beerId').value,
-        name : document.getElementById('name').value,
-        type : document.getElementById('type').value,
-        brewery : document.getElementById('brewery').value,
-        description : document.getElementById('description').value,
-        location : document.getElementById('location').value,
-        rating : document.getElementById('rating').value,
-        image : image
+    // const beerInfo = 
+    // {   
+    //     id : document.getElementById('beerId').value,
+    //     name : document.getElementById('name').value,
+    //     type : document.getElementById('type').value,
+    //     brewery : document.getElementById('brewery').value,
+    //     description : document.getElementById('description').value,
+    //     location : document.getElementById('location').value,
+    //     rating : document.getElementById('rating').value,
+    //     image : image
+    // }
+
+    const beer = {
+        method: "POST",
+        mode: "cors",
+        body: formData
     }
 
-    const result = await fetch('/editBeer', beerId);
+    const result = await fetch('/editBeer', beer);
 };

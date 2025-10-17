@@ -8,29 +8,42 @@
 </head>
 <body>
     <H1> Add a new Beer</H1>
-    <button type="button" onclick="window.location.href='./public/index.html'">Home</button>
+    <button type="button" onclick="window.location.href='index.html'">Home</button>
 
     <form id="newBeerForm" enctype="multipart/form-data">
         <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br><br>
+        <span id="nameRequired" style="color: red;">*</span>
+        <input type="text" id="name" name="name">
+        <span id="nameValid" style="color: red;"></span>
+        <br><br>
 
         <label for="type">Type:</label>
-        <input type="text" id="type" name="type"><br><br>
+        <span id="typeRequired" style="color: red;">*</span>
+        <input type="text" id="type" name="type">
+        <span id="typeValid" style="color: red;"></span>
+        <br><br>
+
+        <label for="rating">Rating:</label>
+        <span id="ratingRequired" style="color: red;">*</span>
+        <input type="number" id="rating" name="rating"> 
+        <span id="ratingValid" style="color: red;"></span>
+        <br><br>
 
         <label for="brewery">Brewery:</label>
-        <input type="text" id="brewery" name="brewery"><br><br>
+        <input type="text" id="brewery" name="brewery">
+        <br><br>
 
         <label for="description">Description:</label>
-        <textarea id="description" name="description"></textarea><br><br>
+        <textarea id="description" name="description"></textarea>
+        <br><br>
 
         <label for="location">Location:</label>
-        <input type="text" id="location" name="location"><br><br>
-
-        <label for="rating">Rating (1-5):</label>
-        <input type="number" id="rating" name="rating" min="1" max="5" required><br><br>
+        <input type="text" id="location" name="location">
+        <br><br>
             
         <label for="upload">Upload or Take a Picture:</label>
         <input type="file" id="upload" name="image" accept="image/*">
+        <span id="imageValid" style="color: red;"></span>
         <!-- <p>OR</p>
         <label for="camera">Take a picture</label> 
         <input type="file" id="camera" accept="image/*" name="image" capture="environment"> -->
@@ -43,6 +56,6 @@
 
     <br>
 
-    <button type="button" onclick="window.location.href='./public/index.html'">Cancel</button>
+    <button type="button" onclick="window.location.href='index.html'">Cancel</button>
 </body>
 </html>

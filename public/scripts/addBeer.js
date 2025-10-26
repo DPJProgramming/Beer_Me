@@ -1,78 +1,12 @@
+import validate from './validation.js';
+
 window.onload = function() {    
     const form = document.getElementById("newBeerForm");
-    form.addEventListener("submit", validate); 
+    form.addEventListener("submit", (event) => validate.validateForm(event, addBeer)); 
 }
 
-function validate(event){
-    event.preventDefault();
-    const isValid = areFieldsValid();
-
-    if(!isValid){
-        return;
-    }
-    else{
-        getNewBeerInfo(event);
-    }
-}
-
-function areFieldsValid(){
-    let valid = true;
-    const name = document.getElementById("name").value;
-    const type = document.getElementById("type").value;
-    const rating = document.getElementById("rating").value;
-    const upload = document.getElementById("upload");
-    const image = upload.files[0];
-    const imageValid = document.getElementById("imageValid");
-
-    const nameValid = document.getElementById("nameValid");
-    const typeValid = document.getElementById("typeValid");
-    const ratingValid = document.getElementById("ratingValid");
-
-    if(!name){
-        nameValid.textContent = "Name is required";
-        valid = false;
-    }
-    else{
-        nameValid.textContent = "";
-    }
-    if(!type){
-        typeValid.textContent = "Type is required";
-        valid = false;
-    }
-    else{
-        typeValid.textContent = "";
-    }
-    if(!rating || isNaN(rating) || rating < 1 || rating > 5){
-        ratingValid.textContent = "Rating is required and must be a number between 1 and 5";
-        valid = false;
-    }
-    else{
-        ratingValid.textContent = "";
-    }
-    if(image){
-        const types = ['image/jpeg', 'image/png', 'image/gif', 'image/heic', 'image/heif'];
-        if(!types.includes(image.type)){
-            imageValid.innerText = "Invalid image type. Allowed types: JPEG, PNG, GIF, HEIC, HEIF.";
-            valid = false;
-        }
-        else{
-            imageValid.innerText = "";
-        }
-    }
-    return valid;
-}
-
-function getNewBeerInfo(event){
-    event.preventDefault();
-
-    //get form info
-    const newBeer = new FormData(event.target);
-
-    //send beer to backend
-    addBeer(newBeer);
-}
-
-async function addBeer(newBeer){
+async function addBeer(newBeer){    
+    console.log("reached addBeer");
     const config = {
         method:"post",
         mode: "cors",
@@ -84,4 +18,26 @@ async function addBeer(newBeer){
 
     //TO DO:
     //handle response
+    if(response.ok){
+        alert('Beer added successfully');
+        window.location.href = 'index.html';
+    }
+    else{
+        alert('Failed to add beer. Please try again.');
+    }
 }
+
+// function validate(event){
+//     event.preventDefault();
+//     const newBeer = new FormData(event.target);
+//     const validator = new Validate();
+
+//     if(validator.validate(newBeer))  
+//         {
+//             console.log("All validations passed");
+//             addBeer(newBeer);
+//         }
+//     else{
+//         return;
+//     }
+// }

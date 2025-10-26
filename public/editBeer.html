@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Beer</title>
-    <script src="./scripts/editBeer.js" defer></script>
+    <script type="module" src="./scripts/editBeer.js" defer></script>
 </head>
 <body>
     <H1>Modify this Beer</H1>
@@ -46,6 +46,8 @@
 
         <label for="image">Replace Picture</label>
         <input type="file" id="image" name="image" accept="image/*">
+        <span id="imageValid" style="color: red;"></span>
+
 
         <label for="date">Date:</label>
         <span id="date"></span>

@@ -1,3 +1,5 @@
+import validate from './validation.js';
+
 window.onload = async () => {
     
     //get beer id from url
@@ -6,7 +8,7 @@ window.onload = async () => {
 
     //prepare form submission handler
     const editForm = document.getElementById('editBeerForm');
-    editForm.addEventListener('submit', validate);
+    editForm.addEventListener('submit', (event) => validate.validateForm(event, submitEditBeer));
 
     //fill initial form data
     fillFormData(beerId);    
@@ -49,107 +51,20 @@ async function fillFormData(beerId) {
     }
 };
 
-function validate(event){
-    event.preventDefault();
-    const isValid = areFieldsValid();
-
-    if(!isValid){
-        return;
-    }
-    else{
-        submitEditBeer(event);
-    }
-}
-
-function areFieldsValid(){
-    let valid = true;
-    
-    valid = validateName() && valid;
-    valid = validateType() && valid;
-    valid = validateRating() && valid;
-
-    return valid;
-}
-
-async function submitEditBeer(event) {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-
-    const beer = {
+async function submitEditBeer(editedBeer) {
+    const config = {
         method: "POST",
         mode: "cors",
-        body: formData
+        body: editedBeer
     }
 
-    const result = await fetch('/editBeer', beer);
-
-    //TO DO: handle response properly
-    console.log(result);
+    const result = await fetch('/editBeer', config);
 
     if(result.ok){
         alert('Beer updated successfully');
         window.location.href = 'index.html';
     }
-}
-
-function validateName() {
-    const name = document.getElementById("name").value;
-    const nameValid = document.getElementById("nameValid");
-
-    if (!name) {
-        nameValid.textContent = "Name is required";
-        return false;
-    } 
-    else {
-        nameValid.textContent = "";
-        return true;
+    else{
+        alert('Failed to update beer. Please try again.');
     }
-}
-
-function validateType() {
-    const type = document.getElementById("type").value;
-    const typeValid = document.getElementById("typeValid");
-
-    if (!type) {
-        typeValid.textContent = "Type is required";
-        return false;
-    }
-    else {
-        typeValid.textContent = "";
-        return true;
-    }
-}
-
-function validateRating() {
-    console.log("Validating rating");
-    const rating = document.getElementById("rating").value;
-    const ratingValid = document.getElementById("ratingValid");
-
-    if (!rating || isNaN(rating) || rating < 1 || rating > 5) {
-        ratingValid.textContent = "Rating is required and must be a number between 1 and 5";
-        return false;
-    }
-    else {
-        ratingValid.textContent = "";
-        return true;
-    }
-}
-
-function validateImage() {
-    const upload = document.getElementById("upload");
-    const image = upload.files[0];
-    const imageValid = document.getElementById("imageValid");
-
-    if (image) {
-        const types = ['image/jpeg', 'image/png', 'image/gif', 'image/heic', 'image/heif'];
-        if (!types.includes(image.type)) {
-            imageValid.innerText = "Invalid image type. Allowed types: JPEG, PNG, GIF, HEIC, HEIF.";
-            return false;
-        }
-        else {
-            imageValid.innerText = "";
-            return true;
-        }
-    }
-    return true;
 }

@@ -1,27 +1,5 @@
-function validateForm(event, callback){
-    event.preventDefault();
-    const beer = new FormData(event.target);
-    let valid = true;
 
-    if(!name(beer.get("name"))){
-        valid = false;
-    }
-    if(!type(beer.get("type"))){
-        valid = false;
-    }
-    if(!rating(beer.get("rating"))){
-        valid = false;
-    }
-    if(!image(document.getElementById("image"))){
-        valid = false;
-    }
-    if(valid){
-        callback(beer);
-    }
-}
-function name(name) {
-    const nameValid = document.getElementById("nameValid");
-
+function name(name, nameValid) {
     if (!name) {
         nameValid.textContent = "Name is required";
         return false;
@@ -32,9 +10,7 @@ function name(name) {
     }
 }
 
-function type(type) {
-    const typeValid = document.getElementById("typeValid");
-
+function type(type, typeValid) {
     if (!type) {
         typeValid.textContent = "Type is required";
         return false;
@@ -45,9 +21,7 @@ function type(type) {
     }
 }
 
-function rating(rating) {
-    const ratingValid = document.getElementById("ratingValid");
-
+function rating(rating, ratingValid) {
     if (!rating || isNaN(rating) || rating < 1 || rating > 5) {
         ratingValid.textContent = "Rating is required and must be a number between 1 and 5";
         return false;
@@ -58,9 +32,8 @@ function rating(rating) {
     }
 }
 
-function image(upload) {
+function image(upload, imageValid) {
     const image = upload.files[0];
-    const imageValid = document.getElementById("imageValid");
 
     if(image) {
         const types = ['image/jpeg', 'image/png', 'image/gif', 'image/heic', 'image/heif'];
@@ -77,5 +50,8 @@ function image(upload) {
 }
 
 export default{
-    validateForm
+    name,
+    type,
+    rating,
+    image
 }

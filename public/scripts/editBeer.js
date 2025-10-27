@@ -8,10 +8,43 @@ window.onload = async () => {
 
     //prepare form submission handler
     const editForm = document.getElementById('editBeerForm');
-    editForm.addEventListener('submit', (event) => validate.validateForm(event, submitEditBeer));
+    editForm.addEventListener('submit', (event) => validateForm(event));
 
     //fill initial form data
     fillFormData(beerId);    
+}
+
+function validateForm(event){
+    event.preventDefault();
+    const beer = new FormData(event.target);
+    let spans = getFormSpans(event.target);
+    let isValid = true;
+
+    if(!validate.name(beer.get("name"), spans.name)){
+        isValid = false;
+    }
+    if(!validate.type(beer.get("type"), spans.type)){
+        isValid = false;
+    }
+    if(!validate.rating(beer.get("rating"), spans.rating)){
+        isValid = false;
+    }
+    if(!validate.image(document.getElementById("image"), spans.image)){
+        isValid = false;
+    }
+
+    if(isValid){
+        submitEditBeer(beer);
+    }
+}
+
+function getFormSpans(form){
+    return {
+        name: form.querySelector("#nameValid"),
+        type: form.querySelector("#typeValid"),
+        rating: form.querySelector("#ratingValid"),
+        image: form.querySelector("#imageValid")
+    };
 }
 
 async function fillFormData(beerId) {

@@ -19,16 +19,25 @@
         <span id="nameValid" style="color: red;"></span>
         <br><br>
 
-        <label for="type">Type:</label>
-        <span id="typeRequired" style="color: red;">*</span>
-        <input type="text" id="type" name="type">
-        <span id="typeValid" style="color: red;"></span>
-        <br><br>
-
         <label for="rating">Rating:</label>
         <span id="ratingRequired" style="color: red;">*</span>
         <input type="number" id="rating" name="rating"> 
         <span id="ratingValid" style="color: red;"></span>
+        <br><br>
+
+        <label>Current Picture:</label>
+        <br>
+        <img id="currentImage" src="" alt="No image available" width="200"><br><br>
+
+        <label for="image">Replace Picture</label>
+        <input type="file" id="image" name="image" accept="image/*">
+        <span id="imageValid" style="color: red;"></span>
+        <br><br>
+
+        <label for="type">Type:</label>
+        <span id="typeRequired" style="color: red;">*</span>
+        <input type="text" id="type" name="type">
+        <span id="typeValid" style="color: red;"></span>
         <br><br>
 
         <label for="brewery">Brewery:</label>
@@ -39,15 +48,6 @@
 
         <label for="location">Location:</label>
         <input type="text" id="location" name="location"><br><br>
-
-        <label>Current Picture:</label>
-        <br>
-        <img id="currentImage" src="" alt="No image available" width="200"><br><br>
-
-        <label for="image">Replace Picture</label>
-        <input type="file" id="image" name="image" accept="image/*">
-        <span id="imageValid" style="color: red;"></span>
-
 
         <label for="date">Date:</label>
         <span id="date"></span>

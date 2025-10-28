@@ -8,7 +8,7 @@ window.onload = async () => {
 
     //prepare form submission handler
     const editForm = document.getElementById('editBeerForm');
-    editForm.addEventListener('submit', (event) => validateForm(event));
+    editForm.addEventListener('submit', validateForm);
 
     //fill initial form data
     fillFormData(beerId);    
@@ -18,20 +18,7 @@ function validateForm(event){
     event.preventDefault();
     const beer = new FormData(event.target);
     let spans = getFormSpans(event.target);
-    let isValid = true;
-
-    if(!validate.name(beer.get("name"), spans.name)){
-        isValid = false;
-    }
-    if(!validate.type(beer.get("type"), spans.type)){
-        isValid = false;
-    }
-    if(!validate.rating(beer.get("rating"), spans.rating)){
-        isValid = false;
-    }
-    if(!validate.image(document.getElementById("image"), spans.image)){
-        isValid = false;
-    }
+    let isValid = validate.formValidate(beer, spans);
 
     if(isValid){
         submitEditBeer(beer);

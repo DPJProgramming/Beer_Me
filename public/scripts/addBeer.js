@@ -2,7 +2,27 @@ import validate from './validation.js';
 
 window.onload = function() {    
     const form = document.getElementById("newBeerForm");
-    form.addEventListener("submit", (event) => validate.validateForm(event, addBeer)); 
+    form.addEventListener("submit", validateForm); 
+}
+
+function validateForm(event){
+    event.preventDefault();
+    const beer = new FormData(event.target);
+    let spans = getFormSpans(event.target);
+    let isValid = validate.formValidate(beer, spans);
+
+    if(isValid){
+        submitEditBeer(beer);
+    }
+}
+
+function getFormSpans(form){
+    return {
+        name: form.querySelector("#nameValid"),
+        type: form.querySelector("#typeValid"),
+        rating: form.querySelector("#ratingValid"),
+        image: form.querySelector("#imageValid")
+    };
 }
 
 async function addBeer(newBeer){    

@@ -71,5 +71,6 @@ export default{
     name,
     type,
     rating,
-    image
+    image,
+    formValidate
 }

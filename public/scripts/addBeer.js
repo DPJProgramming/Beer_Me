@@ -12,7 +12,7 @@ function validateForm(event){
     let isValid = validate.formValidate(beer, spans);
 
     if(isValid){
-        submitEditBeer(beer);
+        addBeer(beer);
     }
 }
 

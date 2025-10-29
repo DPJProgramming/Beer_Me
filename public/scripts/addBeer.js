@@ -1,23 +1,32 @@
-window.onload = function() {
+import validate from './validation.js';
+
+window.onload = function() {    
     const form = document.getElementById("newBeerForm");
-    
-    //currently disabled as form is sent directly to backend via form action attribute
-    //form.addEventListener("submit", getNewBeerInfo); 
+    form.addEventListener("submit", validateForm); 
 }
 
-function getNewBeerInfo(event){
+function validateForm(event){
     event.preventDefault();
+    const beer = new FormData(event.target);
+    let spans = getFormSpans(event.target);
+    let isValid = validate.formValidate(beer, spans);
 
-    //get form info
-    const newBeer = new FormData(event.target);
-
-    //send beer to backend
-    addBeer(newBeer);
+    if(isValid){
+        addBeer(beer);
+    }
 }
 
-//currently not used as form is sent directly to backend via form action attribute
-async function addBeer(newBeer){
-    //prepare beer
+function getFormSpans(form){
+    return {
+        name: form.querySelector("#nameValid"),
+        type: form.querySelector("#typeValid"),
+        rating: form.querySelector("#ratingValid"),
+        image: form.querySelector("#imageValid")
+    };
+}
+
+async function addBeer(newBeer){    
+    console.log("reached addBeer");
     const config = {
         method:"post",
         mode: "cors",
@@ -29,4 +38,26 @@ async function addBeer(newBeer){
 
     //TO DO:
     //handle response
+    if(response.ok){
+        alert('Beer added successfully');
+        window.location.href = 'index.html';
+    }
+    else{
+        alert('Failed to add beer. Please try again.');
+    }
 }
+
+// function validate(event){
+//     event.preventDefault();
+//     const newBeer = new FormData(event.target);
+//     const validator = new Validate();
+
+//     if(validator.validate(newBeer))  
+//         {
+//             console.log("All validations passed");
+//             addBeer(newBeer);
+//         }
+//     else{
+//         return;
+//     }
+// }

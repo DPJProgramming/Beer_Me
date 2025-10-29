@@ -8,14 +8,17 @@
 </head>
 <body>
     <h1 id="header">All Beers</h1>
+    <button type="button" onclick="window.location.href='index.html'">Home</button>
+
 
     <label for="add-new">Add New</label>
     <a id="add-beer-link" href="./addBeer.html">   
         <input type="button" id="add-new" value="Add New">
     </a>
 
-    <H2>Your Beers</H2>
+    <H2>Your Beers <span id="numBeers"></span> </H2>
 
+    <label for="sort">Sort By:</label>
      <select id="sort">
         <option value="name">Name</option>
         <option value="rating">Rating</option>
@@ -24,7 +27,9 @@
         <option value="type">Type</option>
         <option value="brewery">Brewery</option>
     </select>
+    <br>
 
+    <label for="search">Search your beers</label>
     <input type="text" id="search" placeholder="Search by name, type, or brewery">
     <span id="searchMessage"></span>
 

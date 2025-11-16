@@ -1,24 +1,16 @@
 import React from "react";
 import { View, Text, Image, Button, StyleSheet } from "react-native";
 
-export default function Beer() {
-    const beer = {
-            name: "Sample Beer",
-            type: "IPA",
-            subType: "Hazy / New England IPA",
-            rating: 4.5,
-            imageUrl: "./assets/images/Delete.png",
-            brewery: "Sample Brewery",
-            description: "A delicious sample beer.",
-            location: "Sample Location"
-    };
+export default function Beer(beer: {name: string, type: string, subType: string,
+                                    rating: number, image: string, brewery: string,
+                                    description: string, location: string}){  
     return (        
         <View>
             <Text>{beer.name}</Text>
             <Text>{beer.type}</Text>
             <Text>{beer.subType}</Text>
             <Text>{beer.rating}</Text>
-            <Image style={BeerStyles.image} source={require("../../assets/images/Delete.png")} />
+            <Image source={{uri: beer.image}} style={BeerStyles.image} />
             <Text>{beer.brewery}</Text>
             <Text>{beer.description}</Text>
             <Text>{beer.location}</Text>

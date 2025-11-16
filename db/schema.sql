@@ -3,9 +3,11 @@ CREATE TABLE IF NOT EXISTS beers (
     name TEXT NOT NULL,
     brewery TEXT,
     type TEXT,
+    subType TEXT,
     description TEXT,
     rating REAL CHECK(rating >= 0 AND rating <= 5),
     date TEXT CHECK(date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'), -- enforce YYYY-MM-DD
     image TEXT,
-    location TEXT
+    location TEXT,
+    deleted INTEGER NOT NULL DEFAULT 0
 );

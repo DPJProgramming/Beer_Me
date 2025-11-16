@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View, FlatList, TextInput } from "react-native";
 import BeerForm from "../components/BeerForm";
+import Beer from "../components/Beer";
 
 export default function Index() {
   return (
@@ -8,6 +9,7 @@ export default function Index() {
       style={homeStyles.view}
     >
       <Text>Top beers goes here</Text>
+      <Beer></Beer>
     </View>
   );
 }

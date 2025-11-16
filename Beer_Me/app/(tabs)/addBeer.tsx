@@ -1,15 +1,14 @@
 import React from "react";
-import { StyleSheet, Text, View, FlatList, TextInput } from "react-native";
+import { StyleSheet, Text, View, TextInput } from "react-native";
 import BeerForm from "../components/BeerForm";
-import Beer from "../components/Beer";
 
-export default function Index() {
+export default function addBeer() {
   return (
     <View
       style={homeStyles.view}
     >
-      <Text>Top beers goes here</Text>
-      <Beer></Beer>
+      <Text>Add a new beer here</Text>
+      <BeerForm />
     </View>
   );
 }

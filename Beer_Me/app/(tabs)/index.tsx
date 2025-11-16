@@ -8,7 +8,6 @@ export default function Index() {
       style={homeStyles.view}
     >
       <Text>Top beers goes here</Text>
-      <BeerForm></BeerForm>
     </View>
   );
 }

@@ -1,18 +1,37 @@
-import React from "react";
+import {useEffect, useState} from "react";
 import { StyleSheet, Text, View, FlatList, TextInput } from "react-native";
 import Beer from "../components/Beer";
 
 export default function Index() {
-    const beers = [{
-            name: "Sample Beer",
-            type: "IPA",
-            subType: "Hazy / New England IPA",
-            rating: 4.5,
-            image: "../../assets/images/Delete.png",
-            brewery: "Sample Brewery",
-            description: "A delicious sample beer.",
-            location: "Sample Location"
-    }];//getBeers();
+    let [beers, setBeers] = useState([]);
+    let [isLoading, setIsLoading] = useState(false);
+    let [error, setError] = useState("");
+
+    useEffect(() => {
+        setIsLoading(true);
+        (async () => {
+            try{
+                const beersData = await getBeers();
+                setBeers(beersData);
+                setIsLoading(false);
+            }
+            catch(err){
+                console.error(err);
+                setError("Failed to fetch beers");
+            }
+        })()
+    }, []);
+
+    //const beers = getBeers();//[{
+    //         name: "Sample Beer",
+    //         type: "IPA",
+    //         subType: "Hazy / New England IPA",
+    //         rating: 4.5,
+    //         image: "../../assets/images/Delete.png",
+    //         brewery: "Sample Brewery",
+    //         description: "A delicious sample beer.",
+    //         location: "Sample Location"
+    // }];
     return (
         <View style={homeStyles.view}>
             <Text>Top beers goes here</Text>
@@ -39,12 +58,7 @@ export default function Index() {
 }
 
 async function getBeers(){
-     const config = {
-        method:"get",
-        mode: 'cors' as RequestMode
-    }
-
-    const response = await fetch('/topBeers', config);
+    const response = await fetch('http://localhost:3000/topBeers', {method: 'GET'});
     const beers = await response.json();
 
     return beers;

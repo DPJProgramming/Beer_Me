@@ -17,6 +17,5 @@ export default function RootLayout() {
             }}>
             <Tabs.Screen name="index" />
             <Tabs.Screen name="addBeer" />
-            <Tabs.Screen name="My Beers" />
           </Tabs>;
 }

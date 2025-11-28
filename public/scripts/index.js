@@ -14,8 +14,9 @@ window.onload = async () => {
         noBeerAlert();
     }
     else{
-        displayBeers(beers.filter((beer, i) => i < 10));
+        displayBeers(beers);
 
+        //load search element
         const search = document.getElementById("search");
         search.addEventListener('input',() => searchFor(beers, search.value));
     }

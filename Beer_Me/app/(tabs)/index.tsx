@@ -14,17 +14,12 @@ export default function myBeers() {
         location?: string;
     };
 
-    let [beers, setBeers] = useState<BeerType[]>([]);
 
-    let host = "http://ip:3000";// replace with env variable
-    if(!host) {
-        console.error("EXPO_PUBLIC_IP is not defined");
-        host = "undefined";
-    }
-    console.log("Using IP address:", host);
+    let [beers, setBeers] = useState<BeerType[]>([]);
+    const placeHolder = require("../../assets/images/placeholder.png");
 
     //const host = `http://localhost:3000`; //for web
-    const placeHolder = require("../../assets/images/placeholder.png");
+    const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
 
     useEffect(() => {        
         (async () => {

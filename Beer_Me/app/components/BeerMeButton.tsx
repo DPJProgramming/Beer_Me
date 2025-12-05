@@ -24,6 +24,8 @@ const styles = StyleSheet.create({
         borderColor: "#ffd33",
         borderRadius: 42,
         padding: 3,
+        justifyContent: "center",
+        alignItems: "center",
     },
     circleButton: {
         flex: 1,

@@ -1,9 +1,6 @@
 import {useEffect, useState} from "react";
-import { StyleSheet, Text, View, FlatList, TextInput, Platform } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
 import Beer from "./components/Beer";
-//import AddBeer from "./(tabs)/AddBeer";
-import BeerForm from "./components/BeerForm";
-import CircleButton from "./components/BeerMeButton";
 
 export default function myBeers() {
     type BeerType = {

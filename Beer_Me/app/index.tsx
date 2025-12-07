@@ -74,7 +74,7 @@ const homeStyles = StyleSheet.create({
     view:{
         flex: 1,
         justifyContent: "flex-start",
-        alignItems: "stretch", // allow FlatList to use full width (not centered)
+        alignItems: "stretch",
         paddingTop: 12
     },
     list: {

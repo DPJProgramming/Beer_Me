@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, Modal, Pressable } from "react-native";
+import { StyleSheet, Text, View, Modal, Pressable, Button } from "react-native";
 import BeerForm from "../components/BeerForm";
 import MaterialIcons from "@expo/vector-icons/build/MaterialIcons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,13 +9,18 @@ type Props = {
     onClose: () => void;
 }
 
-export default function AddBeer() {
+export default function AddBeer( {isVisible, onClose: closeAddBeer}: Props) {
     return (
         <SafeAreaView style={addStyles.view}>
-            <View style={addStyles.titleContainer}>
-                <Text>Add a new beer here</Text>
+            <View style={addStyles.header}>
+                <Text style={addStyles.title}>Pour a New Brew</Text>
             </View>
             <BeerForm />
+            {isVisible && (
+                <Pressable style={addStyles.footer} pointerEvents="auto">
+                    <Button title="Cancel" onPress={closeAddBeer} />
+                </Pressable>
+            )}
         </SafeAreaView>
     );
 }
@@ -23,16 +28,26 @@ export default function AddBeer() {
 const addStyles = StyleSheet.create({
     view:{
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center"
     },
-    titleContainer: {
-        width: "100%",
+    header: {
         height: 50,
-        backgroundColor: "#25292e",
-        flexDirection: "row",
+        backgroundColor: "#2905baff",
         alignItems: "center",
-        justifyContent: "space-between",
-        paddingHorizontal: 10,
+        justifyContent: "center",
+    },
+    title:{
+        textAlign: "center",
+        fontSize: 16,
+        fontWeight: "600",
+        color: "#FFF",
+        paddingBottom: 4
+    },
+    footer:{
+        height: 100,
+        backgroundColor: "#FFF",
+    },
+    close:{
+        padding: 6,
+        color: "#2905baff"
     }
 });

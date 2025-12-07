@@ -1,11 +1,11 @@
 import React from 'react';
-import { TextInput, View, StyleSheet, Text} from 'react-native';
+import { TextInput, StyleSheet, Text, ScrollView} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 
 
 export default function BeerForm() {
     return (
-        <View>
+        <ScrollView style={formStyles.mainContainer}>
             <Text style={formStyles.label}>Name</Text>
             <TextInput style={formStyles.input} placeholder="Name" />
 
@@ -54,22 +54,30 @@ export default function BeerForm() {
 
             <Text style={formStyles.label}>Location</Text>
             <TextInput style={formStyles.input} placeholder="Location" />
-        </View>
+        </ScrollView>
     );
 }
 
 const formStyles = StyleSheet.create({
+    mainContainer:{
+        flex: 1,
+        width: "100%",
+        alignSelf: "center",
+    },
     label:{
+        paddingLeft: 20,
         color: "black",
         fontSize: 16,
         fontWeight: "bold",
         marginBottom: 4
     },
     input:{
+        alignSelf: "center",
         height: 40,
+        width: "90%",
         borderColor: "gray",
         borderWidth: 1,
         marginBottom: 12,
         paddingHorizontal: 8
-    }
+    },
 });

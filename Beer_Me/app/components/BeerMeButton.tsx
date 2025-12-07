@@ -33,5 +33,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 42,
         backgroundColor: "#fff",
+        position: 'absolute',
+        bottom: 20,
+        left: 0,
+        right: 0,
     },
 });

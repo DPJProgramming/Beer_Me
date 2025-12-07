@@ -17,7 +17,7 @@ export default function RootLayout() {
     }
 
     return (
-        <SafeAreaView style={rootStyles.container}>
+        <SafeAreaView style={rootStyles.mainContainer}>
             <Stack>
                 <Stack.Screen name="index" options={{headerShown: true}} />
             </Stack>
@@ -27,43 +27,27 @@ export default function RootLayout() {
                 visible={isFormVisible} 
                 onRequestClose={closeAddBeer}
             >
-                <Pressable style={rootStyles.upper} onPress={closeAddBeer} />
-                <AddBeer/>
-                <View style={rootStyles.lower}>
-                    <Button title="Cancel" onPress={closeAddBeer} />
-                </View>
+                <AddBeer isVisible={isFormVisible} onClose={closeAddBeer} />
             </Modal>
             <View style={rootStyles.buttonContainer} pointerEvents="box-none">
                 <BeerMeButton onPress={openAddBeer}/>
-                <SafeAreaView style={rootStyles.fill}>
-                </SafeAreaView>
             </View>
         </SafeAreaView>
     );
 }
 
 const rootStyles = StyleSheet.create({
-    fill:{
+    mainContainer: {
         flex: 1,
     },
-    upper:{
+    modalHeader:{
         height: 100,
         backgroundColor: "#DDD",
-        opacity: 0.5
-    },
-    lower:{
-        flex: 1,
-        backgroundColor: "#FFF",
-    },
-    container: {
-        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
     },
     buttonContainer: {
-        position: 'absolute',
-        bottom: 5,
-        left: 0,
-        right: 0,
         alignItems: 'center',
-        zIndex: 50,
+        backgroundColor: 'transparent',
     }
 });

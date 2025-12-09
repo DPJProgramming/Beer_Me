@@ -7,35 +7,24 @@ type Props = {
 
 export default function CircleButton({onPress}: Props) {
     return (
-        <View style={styles.circleButtonContainer}>
+        <View>
             <Pressable style={styles.circleButton} onPress={onPress}>
-                <MaterialIcons name="add" size={38} color="#7d0303ff" />
+                <MaterialIcons name="add" size={38} color="#ff0000ff" />
             </Pressable>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    circleButtonContainer: {
+    circleButton: {
+        alignSelf: 'center',
         width: 84,
         height: 84,
-        marginHorizontal: 60,
-        borderWidth: 4,
-        borderColor: "#ffd33",
-        borderRadius: 42,
-        padding: 3,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    circleButton: {
-        flex: 1,
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 42,
-        backgroundColor: "#fff",
+        backgroundColor: "#00eaffff",
         position: 'absolute',
-        bottom: 20,
-        left: 0,
-        right: 0,
+        bottom: 30,
     },
 });

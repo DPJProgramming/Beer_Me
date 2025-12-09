@@ -1,13 +1,41 @@
-import React from 'react';
-import { TextInput, StyleSheet, Text, ScrollView} from 'react-native';
+import { useState } from 'react';
+import { TextInput, StyleSheet, Text, ScrollView, Image, Alert, View} from 'react-native';
+import * as ImagePicker from "expo-image-picker";
 import {Picker} from '@react-native-picker/picker';
 
+async function getImage() : Promise<string | undefined> {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (status !== "granted") {
+            Alert.alert("Cant upload image");
+        } 
+        else {
+            const result = await ImagePicker.launchImageLibraryAsync();
+
+            if (!result.canceled) {
+                return result.assets[0].uri;
+            }
+        }
+        return undefined;
+};
 
 export default function BeerForm() {
+    const [image, setImage] = useState<string | undefined>(undefined);
+
+    const pickImage = async () => {
+        const image = await getImage();
+        
+        if(image){
+            setImage(image);
+        }
+    };
+
     return (
-        <ScrollView style={formStyles.mainContainer}>
+        <View style={formStyles.mainContainer}>
             <Text style={formStyles.label}>Name</Text>
             <TextInput style={formStyles.input} placeholder="Name" />
+
+            
 
             <Text style={formStyles.label}>Type</Text>
             <Picker style={formStyles.input}>
@@ -27,6 +55,7 @@ export default function BeerForm() {
                 <Picker.Item label="Blonde Ale" value="Blonde Ale" />
                 <Picker.Item label="Other" value="Other" />
             </Picker>
+
 
             <Text style={formStyles.label}>Sub-Type</Text>
             <Picker>
@@ -54,7 +83,7 @@ export default function BeerForm() {
 
             <Text style={formStyles.label}>Location</Text>
             <TextInput style={formStyles.input} placeholder="Location" />
-        </ScrollView>
+        </View>
     );
 }
 
@@ -69,7 +98,7 @@ const formStyles = StyleSheet.create({
         color: "black",
         fontSize: 16,
         fontWeight: "bold",
-        marginBottom: 4
+        //marginBottom: 1
     },
     input:{
         alignSelf: "center",
@@ -77,7 +106,8 @@ const formStyles = StyleSheet.create({
         width: "90%",
         borderColor: "gray",
         borderWidth: 1,
-        marginBottom: 12,
+        marginBottom: 25,
+        marginTop: 4,
         paddingHorizontal: 8
     },
 });

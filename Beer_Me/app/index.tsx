@@ -37,7 +37,7 @@ export default function myBeers() {
     }, []);
 
     return (
-        <View style={homeStyles.container}>
+        <View style={homeStyles.mainContainer}>
             <View style={homeStyles.view}>
                 <FlatList
                     style={homeStyles.list}
@@ -72,16 +72,17 @@ async function getBeers(host : string){
 
 const homeStyles = StyleSheet.create({
     view:{
-        flex: 1,
-        justifyContent: "flex-start",
-        alignItems: "stretch",
-        paddingTop: 12
+        //flex: 1,
+        //justifyContent: "flex-start",
+        //alignItems: "stretch",
     },
     list: {
-        flex: 1,
-        width: '100%'
+        //flex: 1,
+        //width: '100%'
     },
-    container:{
+    mainContainer:{
         flex: 1,
+        //justifyContent: "flex-start",
+        //alignItems: "stretch",
     }
 });

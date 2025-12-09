@@ -17,22 +17,20 @@ export default function RootLayout() {
     }
 
     return (
-        <SafeAreaView style={rootStyles.mainContainer}>
+        <View style={rootStyles.mainContainer}>
             <Stack>
                 <Stack.Screen name="index" options={{headerShown: true}} />
             </Stack>
 
-            <Modal 
+            <Modal
                 animationType="slide" 
                 visible={isFormVisible} 
                 onRequestClose={closeAddBeer}
             >
-                <AddBeer isVisible={isFormVisible} onClose={closeAddBeer} />
+                <AddBeer onClose={closeAddBeer} />
             </Modal>
-            <View style={rootStyles.buttonContainer} pointerEvents="box-none">
                 <BeerMeButton onPress={openAddBeer}/>
-            </View>
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -40,14 +38,4 @@ const rootStyles = StyleSheet.create({
     mainContainer: {
         flex: 1,
     },
-    modalHeader:{
-        height: 100,
-        backgroundColor: "#DDD",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    buttonContainer: {
-        alignItems: 'center',
-        backgroundColor: 'transparent',
-    }
 });

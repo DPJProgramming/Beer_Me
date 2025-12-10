@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TextInput, StyleSheet, Text, ScrollView, Image, Alert, View} from 'react-native';
+import { TextInput, StyleSheet, Text, ScrollView, Image, Alert, View, Button, Pressable} from 'react-native';
 import * as ImagePicker from "expo-image-picker";
 import {Picker} from '@react-native-picker/picker';
 
@@ -32,10 +32,27 @@ export default function BeerForm() {
 
     return (
         <View style={formStyles.mainContainer}>
-            <Text style={formStyles.label}>Name</Text>
+            <Text style={formStyles.label}>Name *</Text>
             <TextInput style={formStyles.input} placeholder="Name" />
 
-            
+            <Text style={formStyles.label}>Photo</Text>
+            <View style={formStyles.imageContainer}>
+                {image && (
+                    <Image style={formStyles.image} source={{ uri: image }} />
+                )}
+                <View style={formStyles.buttonColumn}>
+                    <Pressable style={formStyles.imageButton} onPress={pickImage}>
+                        <Text style={{ color: "white" }}>
+                            {image && "Change photo" || "Choose a photo"}
+                        </Text>
+                    </Pressable>
+                    {image && (
+                        <Pressable onPress={() => setImage(undefined)} style={formStyles.removeButton}>
+                            <Text style={{ color: "white" }}>Remove photo</Text>
+                        </Pressable>                    
+                    )}
+                </View>
+            </View>
 
             <Text style={formStyles.label}>Type</Text>
             <Picker style={formStyles.input}>
@@ -72,7 +89,7 @@ export default function BeerForm() {
                 <Picker.Item label="Other" value="Other" />
             </Picker>
 
-            <Text style={formStyles.label}>Rating</Text>
+            <Text style={formStyles.label}>Rating *</Text>
             <TextInput style={formStyles.input} placeholder="Rating" keyboardType="numeric" />
 
             <Text style={formStyles.label}>Brewery</Text>
@@ -110,4 +127,37 @@ const formStyles = StyleSheet.create({
         marginTop: 4,
         paddingHorizontal: 8
     },
+    image:{
+        width: 120,
+        height: 120,
+        borderRadius: 5,
+    },
+    imageContainer:{
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 12,
+        marginBottom: 20,
+        marginLeft: 20,
+    },
+    imageButton:{
+        alignSelf: "flex-start",
+        backgroundColor: "#007BFF",
+        padding: 10,
+        borderRadius: 5,
+        marginLeft: 20,
+        marginBottom: 20,
+    },
+    removeButton:{
+        alignSelf: "flex-start",
+        backgroundColor: "#ff4444",
+        padding: 10,
+        borderRadius: 5,
+        marginLeft: 20,
+        marginBottom: 20,
+    },
+    buttonColumn:{
+        flexDirection: "column",
+        gap: 8,
+        flex: 1,
+    }
 });

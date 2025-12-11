@@ -71,6 +71,11 @@ async function getBeers(host : string){
 }
 
 const homeStyles = StyleSheet.create({
+    mainContainer:{
+        flex: 1,
+        //justifyContent: "flex-start",
+        //alignItems: "stretch",
+    },
     view:{
         //flex: 1,
         //justifyContent: "flex-start",
@@ -79,10 +84,5 @@ const homeStyles = StyleSheet.create({
     list: {
         //flex: 1,
         //width: '100%'
-    },
-    mainContainer:{
-        flex: 1,
-        //justifyContent: "flex-start",
-        //alignItems: "stretch",
     }
 });

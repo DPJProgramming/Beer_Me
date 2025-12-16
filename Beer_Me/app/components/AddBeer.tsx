@@ -6,28 +6,49 @@ type Props = {
     onClose: () => void;
 }
 
-const addBeer = (values: BeerFormValues) => {
-        // const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
-        // const result = fetch(`http://${host}:3000/addBeer`, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify({
-        //         image: values.image,
-        //         name: values.name,
-        //         type: values.type,
-        //         subType: values.subType,
-        //         rating: values.rating,
-        //         brewery: values.brewery,
-        //         description: values.description,
-        //         location: values.location,
-        //         date: values.date
-        //     })
-        // });
-        // console.log(result);
-        console.log("Name: " + values.name);
-        alert("Beer added!");
+const addBeer = async (values: BeerFormValues, onClose: () => void) => {
+    const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
+    
+    //append data from addBeer form
+    const formData = new FormData();
+    formData.append('name', values.name);
+    formData.append('type', values.type ?? '');
+    formData.append('subType', values.subType ?? '');
+    formData.append('rating', values.rating.toString());
+    formData.append('brewery', values.brewery ?? '');
+    formData.append('description', values.description ?? '');
+    formData.append('location', values.location ?? '');
+    formData.append('date', new Date().toISOString().split('T')[0]);
+
+    //handle image upload
+    if (values.image) {
+        const filename = values.image.split('/').pop() ?? 'upload.heic';
+        const ext = filename.includes('.') ? filename.substring(filename.lastIndexOf('.') + 1).toLowerCase() : 'jpeg';
+        const mimeType = ext === 'jpg' ? 'image/jpeg' : `image/${ext}`;
+
+        formData.append('image', {
+            uri: values.image,
+            type: mimeType,
+            name: filename,
+        } as any);
+    }
+
+    //send to backend
+    const config = {
+        method:"post",
+        body: formData,
+    }
+    const response = await fetch(`${host}/addBeer`, config);
+
+    //console.log(response);
+
+    if(response.ok){
+        alert('Beer added successfully');
+        onClose();
+    }
+    else{
+        alert('Failed to add beer. Please try again.');
+    }
 };
 
 export default function AddBeer( {onClose: closeAddBeer}: Props) {
@@ -38,7 +59,7 @@ export default function AddBeer( {onClose: closeAddBeer}: Props) {
             </View>
 
             <View style={addStyles.view}>
-                <BeerForm onSubmit={addBeer} onClose={closeAddBeer} accept={"Add"}/>
+                <BeerForm onSubmit={(values) => addBeer(values, closeAddBeer)} onClose={closeAddBeer} accept={"Add"}/>
             </View>
         </SafeAreaView>
     );

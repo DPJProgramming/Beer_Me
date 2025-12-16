@@ -26,8 +26,6 @@ export default function myBeers() {
             try{
                 const beersData = await getBeers(host);
                 setBeers(beersData);
-
-                console.log("Beers fetched successfully");
             }
             catch(err){
                 console.error(err);

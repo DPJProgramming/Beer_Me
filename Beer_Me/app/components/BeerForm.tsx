@@ -1,35 +1,37 @@
 import { useState } from 'react';
 import { TextInput, StyleSheet, Text, ScrollView, Image, Alert, View, Button, Pressable, KeyboardAvoidingView, Platform} from 'react-native';
 import * as ImagePicker from "expo-image-picker";
-//import {Picker} from '@react-native-picker/picker';
+import {useForm} from 'react-hook-form';
 import DropDownPicker from 'react-native-dropdown-picker';
+//import { BeerSchema } from '../schema/formValidationSchema';
+//import { zodResolver } from '@hookform/resolvers/zod';
 
 
 async function getImage() : Promise<string | undefined> {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-        if (status !== "granted") {
-            Alert.alert("Cant upload image");
-        } 
-        else {
-            const result = await ImagePicker.launchImageLibraryAsync();
+    if (status !== "granted") {
+        Alert.alert("Cant upload image");
+    } 
+    else {
+        const result = await ImagePicker.launchImageLibraryAsync();
 
-            if (!result.canceled) {
-                return result.assets[0].uri;
-            }
+        if (!result.canceled) {
+            return result.assets[0].uri;
         }
-        return undefined;
+    }
+    return undefined;
 };
 
 export type BeerFormValues = {
-  image: string | undefined;
-  name: string;
-  type: string;
-  subType: string;
-  rating: number | undefined;
-  brewery: string;
-  description: string;
-  location: string;
+    name: string;
+    rating: number;
+    image?: string | undefined;
+    type?: string;
+    subType?: string;
+    brewery?: string;
+    description?: string;
+    location?: string;
 };
 
 type BeerFormProps = {
@@ -40,6 +42,31 @@ type BeerFormProps = {
 };
 
 export default function BeerForm({ onSubmit, onClose, initialValues, accept }: BeerFormProps) {
+    const pickImage = async () => {
+        const image = await getImage();
+        
+        if(image){
+            setImage(image);
+        }
+    };
+
+    const submitForm = () => {
+        onSubmit({ image, name, type, subType, rating, brewery, description, location });
+    };
+
+    const form = useForm<BeerFormValues>({
+        defaultValues: {
+            image: initialValues?.image ?? undefined,
+            name: initialValues?.name ?? "", 
+            type: initialValues?.type ?? "",
+            subType: initialValues?.subType ?? "",
+            rating: initialValues?.rating ?? 0,
+            brewery: initialValues?.brewery ?? "",
+            description: initialValues?.description ?? "",
+            location: initialValues?.location ?? "",
+        }
+    })
+
     const [image, setImage] = useState<string | undefined>(undefined);
     const [name, setName] = useState<string>("");
 
@@ -79,22 +106,10 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
         { label: "Other", value: "Other" }
     ]);
 
-    const [rating, setRating] = useState<number | undefined>(undefined);
+    const [rating, setRating] = useState<number>(0);
     const [brewery, setBrewery] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [location, setLocation] = useState<string>("");
-
-    const pickImage = async () => {
-        const image = await getImage();
-        
-        if(image){
-            setImage(image);
-        }
-    };
-
-    const submitForm = () => {
-        onSubmit({ image, name, type, subType, rating, brewery, description, location });
-    };
 
     return (
         <View style={formStyles.mainContainer}>
@@ -161,19 +176,19 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
                     <Text style={formStyles.label}>Rating *</Text>
                     <TextInput style={formStyles.input} placeholder="Rating" keyboardType="numeric" onChangeText={(text) => setRating(Number(text))} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
 
-                        <Text style={formStyles.label}>Brewery</Text>
-                        <TextInput style={formStyles.input} placeholder="Brewery" onChangeText={setBrewery} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
+                    <Text style={formStyles.label}>Brewery</Text>
+                    <TextInput style={formStyles.input} placeholder="Brewery" onChangeText={setBrewery} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
 
-                        <Text style={formStyles.label}>Description</Text>
-                        <TextInput style={formStyles.input} placeholder="Description" multiline onChangeText={setDescription} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
-                    
-                        <Text style={formStyles.label}>Location</Text>
-                        <TextInput style={formStyles.input} placeholder="Location" onChangeText={setLocation} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
+                    <Text style={formStyles.label}>Description</Text>
+                    <TextInput style={formStyles.input} placeholder="Description" multiline onChangeText={setDescription} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
+                
+                    <Text style={formStyles.label}>Location</Text>
+                    <TextInput style={formStyles.input} placeholder="Location" onChangeText={setLocation} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
                 </Pressable>
             </ScrollView>
 
             <View style={formStyles.footer}>
-                <Pressable style={[formStyles.button, formStyles.accept]} onPress={submitForm}>
+                <Pressable style={[formStyles.button, formStyles.accept]} onPress={form.handleSubmit(submitForm)}>
                     <Text style={formStyles.accept}>{accept}</Text>
                 </Pressable>
 

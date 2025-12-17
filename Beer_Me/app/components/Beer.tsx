@@ -22,7 +22,7 @@ export default function Beer(beer: {name?: string, type?: string, subType?: stri
 const BeerStyles = StyleSheet.create({
     // single-column (row) container - keep as fallback
     container:{
-        width: "100%",
+        flex: 1,
         borderWidth: 1,
         borderColor: 'black',
         borderStyle: 'solid',

@@ -4,6 +4,9 @@
 --select all entries
 SELECT * FROM beers
 
+--count of entries
+--SELECT count(*) FROM beers
+
 --select only certain type
 --SELECT * FROM beers WHERE type = 'porter' 
 

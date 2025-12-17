@@ -4,6 +4,7 @@ import Beer from "./components/Beer";
 
 export default function myBeers() {
     type BeerType = {
+        id: number;
         name: string;
         image?: string;
         type?: string;
@@ -41,19 +42,21 @@ export default function myBeers() {
                     style={homeStyles.list}
                     numColumns={2}
                     data={beers}
+                    keyExtractor={(item) => item.id.toString()}
                     renderItem={({item: beer}) => {
                         const beerType = (beer.subType && beer.subType.trim().length) ? beer.subType : beer.type;
 
                         return(
-                        <Beer
-                            name={beer.name ?? ''}
-                            rating={beer.rating ?? 0}
-                            type={beerType ?? ''}
-                            subType={beer.subType ?? ''}
-                            image={beer.image ? `${host}/img/${beer.image}` : placeHolder}
-                        >
-                        </Beer>
-                    )}}>
+                            <Beer
+                                name={beer.name ?? ''}
+                                rating={beer.rating ?? 0}
+                                type={beerType ?? ''}
+                                subType={beer.subType ?? ''}
+                                image={beer.image ? `${host}/img/${beer.image}` : placeHolder}
+                            >
+                            </Beer>
+                        );
+                    }}>
                     
                 </FlatList>
             </View>
@@ -64,6 +67,8 @@ export default function myBeers() {
 async function getBeers(host : string){
     const response = await fetch(`${host}/allBeers`, {method: 'GET'});
     const beers = await response.json();
+
+    console.log(beers.length);
 
     return beers;
 }

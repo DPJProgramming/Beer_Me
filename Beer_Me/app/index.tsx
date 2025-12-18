@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import { StyleSheet, View, FlatList } from "react-native";
+import { StyleSheet, View, FlatList, Button } from "react-native";
 import Beer from "./components/Beer";
 
 export default function myBeers() {
@@ -48,6 +48,7 @@ export default function myBeers() {
 
                         return(
                             <Beer
+                                id={beer.id}
                                 name={beer.name ?? ''}
                                 rating={beer.rating ?? 0}
                                 type={beerType ?? ''}

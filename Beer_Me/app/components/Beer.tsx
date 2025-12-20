@@ -1,12 +1,18 @@
 import React from "react";
 import { View, Text, Image, Button, StyleSheet } from "react-native";
 
-const deleteBeer = async (id: number) => {
+const deleteBeer = async (id: number, onDelete: (id: number) => void) => {
+    // const confirmDelete = confirm('Are you sure you want to delete this beer?');
+    // if(!confirmDelete){
+    //     return;
+    // }
+
     const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
     const response = await fetch(`${host}/deleteBeer/${id}`, {method: "post"});
 
     if(response.ok){
         alert('Beer deleted successfully');
+        onDelete(id);
     }
     else{
         alert('Failed to delete beer. Please try again.');
@@ -15,8 +21,8 @@ const deleteBeer = async (id: number) => {
 
 export default function Beer(beer: {id:number, name?: string, type?: string, subType?: string,
                                     rating?: number, image?: string, brewery?: string,
-                                    description?: string, location?: string
-                                }
+                                    description?: string, location?: string,
+                                    onDelete: (id: number) => void}
                             ){  
     return (        
         <View style={BeerStyles.container}>
@@ -28,7 +34,7 @@ export default function Beer(beer: {id:number, name?: string, type?: string, sub
             <Text>{beer.brewery}</Text>
             <Text>{beer.description}</Text>
             <Text>{beer.location}</Text>
-            <Button title="Delete" onPress={() => deleteBeer(beer.id)}/>
+            <Button title="Delete" onPress={() => deleteBeer(beer.id, beer.onDelete)}/>
         </View>
     );
 }

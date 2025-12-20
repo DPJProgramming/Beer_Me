@@ -15,7 +15,6 @@ export default function myBeers() {
         location?: string;
     };
 
-
     let [beers, setBeers] = useState<BeerType[]>([]);
     const placeHolder = require("../assets/images/placeholder.png");
 
@@ -34,6 +33,11 @@ export default function myBeers() {
             }
         })()
     }, []);
+    
+    const refreshAfterDelete = (id: number) => {
+        beers = beers.filter(beer => beer.id !== id);
+        setBeers(beers);
+    }
 
     return (
         <View style={homeStyles.mainContainer}>
@@ -54,6 +58,7 @@ export default function myBeers() {
                                 type={beerType ?? ''}
                                 subType={beer.subType ?? ''}
                                 image={beer.image ? `${host}/img/${beer.image}` : placeHolder}
+                                onDelete={() => refreshAfterDelete(beer.id)}
                             >
                             </Beer>
                         );

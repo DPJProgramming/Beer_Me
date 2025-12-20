@@ -4,7 +4,7 @@ import { View, Text, Image, Button, StyleSheet, Alert } from "react-native";
 const confirmDelete = (id: number, onDelete: (id: number) => void) => {
     Alert.alert(
         "Confirm Deletion",
-        "Are you sure you want to delete this beer?", [
+        "Are you sure you want to recycle this beer?", [
             { text: "Cancel", style: "cancel", onPress: () => {} },
             { text: "Delete", style: "destructive", onPress: () => deleteBeer(id, onDelete) }
         ]

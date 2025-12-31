@@ -1,15 +1,12 @@
-import {useContext, useEffect, useState, } from "react";
+import {useEffect} from "react";
 import { StyleSheet, View, FlatList} from "react-native";
 import Beer from "./components/Beer";
-import { BeerType } from "./types/types";
 import {BeerListProvider} from "./context/beerListContext";
 import {useBeerList} from "./context/beerListContext";
 
 //fetch beers from backend
 export default function myBeers() {
-    const {beers, setBeers, removeBeerContext} = useBeerList();
-
-    const placeHolder = require("../assets/images/placeholder.png");
+    const {beers, setBeers, removeBeerContext} = useBeerList(); //get beers from context
 
     //const host = `http://localhost:3000`; //for web
     const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
@@ -29,17 +26,14 @@ export default function myBeers() {
     
     // Refresh beer list after delete
     const refreshAfterDelete = (id: number) => {
-        // beers = beers.filter(beer => beer.id !== id);
-        // setBeers(beers); 
         removeBeerContext(id);
     }
 
     return (
         <BeerListProvider initialBeers={beers}>
             <View style={homeStyles.mainContainer}>
-                <View style={homeStyles.view}>
+                <View >
                     <FlatList
-                        style={homeStyles.list}
                         numColumns={2}
                         data={beers}
                         keyExtractor={(item) => item.id.toString()}
@@ -53,7 +47,7 @@ export default function myBeers() {
                                     rating={beer.rating ?? 0}
                                     type={beerType ?? ''}
                                     subType={beer.subType ?? ''}
-                                    image={beer.image ? `${host}/img/${beer.image}` : placeHolder}
+                                    image={`${host}/img/${beer.image}`}
                                     onDelete={() => refreshAfterDelete(beer.id)}
                                 >
                                 </Beer>
@@ -71,24 +65,11 @@ async function getBeers(host : string){
     const response = await fetch(`${host}/allBeers`, {method: 'GET'});
     const beers = await response.json();
 
-    console.log(beers.length);
-
     return beers;
 }
 
 const homeStyles = StyleSheet.create({
     mainContainer:{
         flex: 1,
-        //justifyContent: "flex-start",
-        //alignItems: "stretch",
     },
-    view:{
-        //flex: 1,
-        //justifyContent: "flex-start",
-        //alignItems: "stretch",
-    },
-    list: {
-        //flex: 1,
-        //width: '100%'
-    }
 });

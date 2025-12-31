@@ -1,13 +1,12 @@
 import { Stack } from "expo-router";
-import {Modal, View, Button, Pressable, StyleSheet} from "react-native";
-import { useState } from "react";
+import {Modal, View, StyleSheet} from "react-native";
+import { useState, useContext} from "react";
 import BeerMeButton from "./components/BeerMeButton";
 import AddBeer from "./components/AddBeer";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { BeerListProvider } from "./context/beerListContext";
 
 export default function RootLayout() {
     const [isFormVisible, setIsFormVisible] = useState(false);
-    const [addingBeer, setAddingBeer] = useState(false);
     
     const openAddBeer = () => {
         setIsFormVisible(true);
@@ -17,20 +16,22 @@ export default function RootLayout() {
     }
 
     return (
-        <View style={rootStyles.mainContainer}>
-            <Stack>
-                <Stack.Screen name="index" options={{headerShown: true}} />
-            </Stack>
+        <BeerListProvider initialBeers={[]}>
+            <View style={rootStyles.mainContainer}>
+                <Stack>
+                    <Stack.Screen name="index" options={{headerShown: true}} />
+                </Stack>
 
-            <Modal
-                animationType="slide" 
-                visible={isFormVisible} 
-                onRequestClose={closeAddBeer}
-            >
-                <AddBeer onClose={closeAddBeer} />
-            </Modal>
-                <BeerMeButton onPress={openAddBeer}/>
-        </View>
+                <Modal
+                    animationType="slide" 
+                    visible={isFormVisible} 
+                    onRequestClose={closeAddBeer}
+                >
+                    <AddBeer onClose={closeAddBeer} />
+                </Modal>
+                    <BeerMeButton onPress={openAddBeer}/>
+            </View>
+        </BeerListProvider>
     );
 }
 

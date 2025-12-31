@@ -1,21 +1,14 @@
-import {useEffect, useState} from "react";
-import { StyleSheet, View, FlatList, Button } from "react-native";
+import {useContext, useEffect, useState, } from "react";
+import { StyleSheet, View, FlatList} from "react-native";
 import Beer from "./components/Beer";
+import { BeerType } from "./types/types";
+import {BeerListProvider} from "./context/beerListContext";
+import {useBeerList} from "./context/beerListContext";
 
+//fetch beers from backend
 export default function myBeers() {
-    type BeerType = {
-        id: number;
-        name: string;
-        image?: string;
-        type?: string;
-        subType?: string;
-        rating?: number;
-        brewery?: string;
-        description?: string;
-        location?: string;
-    };
+    const {beers, setBeers, removeBeerContext} = useBeerList();
 
-    let [beers, setBeers] = useState<BeerType[]>([]);
     const placeHolder = require("../assets/images/placeholder.png");
 
     //const host = `http://localhost:3000`; //for web
@@ -34,39 +27,43 @@ export default function myBeers() {
         })()
     }, []);
     
+    // Refresh beer list after delete
     const refreshAfterDelete = (id: number) => {
-        beers = beers.filter(beer => beer.id !== id);
-        setBeers(beers);
+        // beers = beers.filter(beer => beer.id !== id);
+        // setBeers(beers); 
+        removeBeerContext(id);
     }
 
     return (
-        <View style={homeStyles.mainContainer}>
-            <View style={homeStyles.view}>
-                <FlatList
-                    style={homeStyles.list}
-                    numColumns={2}
-                    data={beers}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({item: beer}) => {
-                        const beerType = (beer.subType && beer.subType.trim().length) ? beer.subType : beer.type;
+        <BeerListProvider initialBeers={beers}>
+            <View style={homeStyles.mainContainer}>
+                <View style={homeStyles.view}>
+                    <FlatList
+                        style={homeStyles.list}
+                        numColumns={2}
+                        data={beers}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={({item: beer}) => {
+                            const beerType = (beer.subType && beer.subType.trim().length) ? beer.subType : beer.type;
 
-                        return(
-                            <Beer
-                                id={beer.id}
-                                name={beer.name ?? ''}
-                                rating={beer.rating ?? 0}
-                                type={beerType ?? ''}
-                                subType={beer.subType ?? ''}
-                                image={beer.image ? `${host}/img/${beer.image}` : placeHolder}
-                                onDelete={() => refreshAfterDelete(beer.id)}
-                            >
-                            </Beer>
-                        );
-                    }}>
-                    
-                </FlatList>
-            </View>
-        </View>
+                            return(
+                                <Beer
+                                    id={beer.id}
+                                    name={beer.name ?? ''}
+                                    rating={beer.rating ?? 0}
+                                    type={beerType ?? ''}
+                                    subType={beer.subType ?? ''}
+                                    image={beer.image ? `${host}/img/${beer.image}` : placeHolder}
+                                    onDelete={() => refreshAfterDelete(beer.id)}
+                                >
+                                </Beer>
+                            );
+                        }}>
+                        
+                    </FlatList>
+                </View>
+            </View> 
+        </BeerListProvider>
     );
 }
 

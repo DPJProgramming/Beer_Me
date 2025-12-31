@@ -3,8 +3,7 @@ import { TextInput, StyleSheet, Text, ScrollView, Image, Alert, View, Button, Pr
 import * as ImagePicker from "expo-image-picker";
 import {useForm} from 'react-hook-form';
 import DropDownPicker from 'react-native-dropdown-picker';
-//import { BeerSchema } from '../schema/formValidationSchema';
-//import { zodResolver } from '@hookform/resolvers/zod';
+import { BeerType } from '../types/types';
 
 
 async function getImage() : Promise<string | undefined> {
@@ -23,21 +22,21 @@ async function getImage() : Promise<string | undefined> {
     return undefined;
 };
 
-export type BeerFormValues = {
-    name: string;
-    rating: number;
-    image?: string | undefined;
-    type?: string;
-    subType?: string;
-    brewery?: string;
-    description?: string;
-    location?: string;
-};
+// export type BeerFormValues = {
+//     name: string;
+//     rating: number;
+//     image?: string | undefined;
+//     type?: string;
+//     subType?: string;
+//     brewery?: string;
+//     description?: string;
+//     location?: string;
+// };
 
 type BeerFormProps = {
-    onSubmit: (values: BeerFormValues) => void;
+    onSubmit: (values: BeerType) => void;
     onClose: () => void;
-    initialValues?: Partial<BeerFormValues>;
+    initialValues?: Partial<BeerType>;
     accept: string;
 };
 
@@ -51,11 +50,12 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
     };
 
     const submitForm = () => {
-        onSubmit({ image, name, type, subType, rating, brewery, description, location });
+        onSubmit({ id, image, name, type, subType, rating, brewery, description, location });
     };
 
-    const form = useForm<BeerFormValues>({
+    const form = useForm<BeerType>({
         defaultValues: {
+            id: initialValues?.id ?? 0,
             image: initialValues?.image ?? undefined,
             name: initialValues?.name ?? "", 
             type: initialValues?.type ?? "",
@@ -106,11 +106,12 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
         { label: "Other", value: "Other" }
     ]);
 
-    const [rating, setRating] = useState<number>(0);
-    const [brewery, setBrewery] = useState<string>("");
-    const [description, setDescription] = useState<string>("");
-    const [location, setLocation] = useState<string>("");
-
+    const [id, setId] = useState<number>(initialValues?.id ?? 0);
+    const [rating, setRating] = useState<number>(initialValues?.rating ?? 0);
+    const [brewery, setBrewery] = useState<string>(initialValues?.brewery ?? "");
+    const [description, setDescription] = useState<string>(initialValues?.description ?? "");
+    const [location, setLocation] = useState<string>(initialValues?.location ?? "");
+    
     return (
         <View style={formStyles.mainContainer}>
             <ScrollView>

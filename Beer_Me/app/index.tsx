@@ -1,27 +1,17 @@
-import {useEffect, useState} from "react";
-import { StyleSheet, View, FlatList, Button } from "react-native";
+import {useEffect} from "react";
+import { StyleSheet, View, FlatList} from "react-native";
 import Beer from "./components/Beer";
+import {BeerListProvider} from "./context/beerListContext";
+import {useBeerList} from "./context/beerListContext";
 
+//fetch beers from backend
 export default function myBeers() {
-    type BeerType = {
-        id: number;
-        name: string;
-        image?: string;
-        type?: string;
-        subType?: string;
-        rating?: number;
-        brewery?: string;
-        description?: string;
-        location?: string;
-    };
-
-
-    let [beers, setBeers] = useState<BeerType[]>([]);
-    const placeHolder = require("../assets/images/placeholder.png");
+    const {beers, setBeers, removeBeerContext} = useBeerList(); //expose context for beer list
 
     //const host = `http://localhost:3000`; //for web
     const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
 
+    //fetch beers on initial load
     useEffect(() => {        
         (async () => {
             try{
@@ -34,34 +24,41 @@ export default function myBeers() {
             }
         })()
     }, []);
+    
+    // Refresh beer list after delete
+    const refreshAfterDelete = (id: number) => {
+        removeBeerContext(id);
+    }
 
     return (
-        <View style={homeStyles.mainContainer}>
-            <View style={homeStyles.view}>
-                <FlatList
-                    style={homeStyles.list}
-                    numColumns={2}
-                    data={beers}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({item: beer}) => {
-                        const beerType = (beer.subType && beer.subType.trim().length) ? beer.subType : beer.type;
+        <BeerListProvider initialBeers={beers}>
+            <View style={homeStyles.mainContainer}>
+                <View >
+                    <FlatList
+                        numColumns={2}
+                        data={beers}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={({item: beer}) => {
+                            const beerType = (beer.subType && beer.subType.trim().length) ? beer.subType : beer.type;
 
-                        return(
-                            <Beer
-                                id={beer.id}
-                                name={beer.name ?? ''}
-                                rating={beer.rating ?? 0}
-                                type={beerType ?? ''}
-                                subType={beer.subType ?? ''}
-                                image={beer.image ? `${host}/img/${beer.image}` : placeHolder}
-                            >
-                            </Beer>
-                        );
-                    }}>
-                    
-                </FlatList>
-            </View>
-        </View>
+                            return(
+                                <Beer
+                                    id={beer.id}
+                                    name={beer.name ?? ''}
+                                    rating={beer.rating ?? 0}
+                                    type={beerType ?? ''}
+                                    subType={beer.subType ?? ''}
+                                    image={`${host}/img/${beer.image}`}
+                                    onDelete={() => refreshAfterDelete(beer.id)}
+                                >
+                                </Beer>
+                            );
+                        }}>
+                        
+                    </FlatList>
+                </View>
+            </View> 
+        </BeerListProvider>
     );
 }
 
@@ -69,24 +66,11 @@ async function getBeers(host : string){
     const response = await fetch(`${host}/allBeers`, {method: 'GET'});
     const beers = await response.json();
 
-    console.log(beers.length);
-
     return beers;
 }
 
 const homeStyles = StyleSheet.create({
     mainContainer:{
         flex: 1,
-        //justifyContent: "flex-start",
-        //alignItems: "stretch",
     },
-    view:{
-        //flex: 1,
-        //justifyContent: "flex-start",
-        //alignItems: "stretch",
-    },
-    list: {
-        //flex: 1,
-        //width: '100%'
-    }
 });

@@ -7,6 +7,7 @@ import { BeerType } from "../types/types";
 type Props = {
     onClose: () => void;
 }
+
 export default function AddBeer( {onClose: closeAddBeer}: Props) {
     const {addBeerContext} = useBeerList();
 
@@ -43,8 +44,6 @@ export default function AddBeer( {onClose: closeAddBeer}: Props) {
             body: formData,
         }
         const response = await fetch(`${host}/addBeer`, config);
-
-        //console.log(response);
 
         if(response.ok){
             alert('Beer added successfully');

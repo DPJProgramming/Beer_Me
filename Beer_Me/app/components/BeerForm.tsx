@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TextInput, StyleSheet, Text, ScrollView, Image, Alert, View, Button, Pressable, KeyboardAvoidingView, Platform} from 'react-native';
+import { TextInput, StyleSheet, Text, ScrollView, Image, Alert, View, Pressable} from 'react-native';
 import * as ImagePicker from "expo-image-picker";
 import {useForm} from 'react-hook-form';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -22,17 +22,6 @@ async function getImage() : Promise<string | undefined> {
     return undefined;
 };
 
-// export type BeerFormValues = {
-//     name: string;
-//     rating: number;
-//     image?: string | undefined;
-//     type?: string;
-//     subType?: string;
-//     brewery?: string;
-//     description?: string;
-//     location?: string;
-// };
-
 type BeerFormProps = {
     onSubmit: (values: BeerType) => void;
     onClose: () => void;
@@ -41,36 +30,15 @@ type BeerFormProps = {
 };
 
 export default function BeerForm({ onSubmit, onClose, initialValues, accept }: BeerFormProps) {
-    const pickImage = async () => {
-        const image = await getImage();
-        
-        if(image){
-            setImage(image);
-        }
-    };
-
-    const submitForm = () => {
-        onSubmit({ id, image, name, type, subType, rating, brewery, description, location });
-    };
-
-    const form = useForm<BeerType>({
-        defaultValues: {
-            id: initialValues?.id ?? 0,
-            image: initialValues?.image ?? undefined,
-            name: initialValues?.name ?? "", 
-            type: initialValues?.type ?? "",
-            subType: initialValues?.subType ?? "",
-            rating: initialValues?.rating ?? 0,
-            brewery: initialValues?.brewery ?? "",
-            description: initialValues?.description ?? "",
-            location: initialValues?.location ?? "",
-        }
-    })
-
+    const [id, setId] = useState<number>(initialValues?.id ?? 0);
+    const [rating, setRating] = useState<number>(initialValues?.rating ?? 0);
+    const [brewery, setBrewery] = useState<string>(initialValues?.brewery ?? "");
+    const [description, setDescription] = useState<string>(initialValues?.description ?? "");
+    const [location, setLocation] = useState<string>(initialValues?.location ?? "");
     const [image, setImage] = useState<string | undefined>(undefined);
     const [name, setName] = useState<string>("");
-
     const [type, setType] = useState<string>("");
+
     const [typeOpen, setTypeOpen] = useState(false);
     const [typeItems, setTypeItems] = useState([
         { label: "IPA", value: "IPA" },
@@ -106,11 +74,31 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
         { label: "Other", value: "Other" }
     ]);
 
-    const [id, setId] = useState<number>(initialValues?.id ?? 0);
-    const [rating, setRating] = useState<number>(initialValues?.rating ?? 0);
-    const [brewery, setBrewery] = useState<string>(initialValues?.brewery ?? "");
-    const [description, setDescription] = useState<string>(initialValues?.description ?? "");
-    const [location, setLocation] = useState<string>(initialValues?.location ?? "");
+    const pickImage = async () => {
+        const image = await getImage();
+        
+        if(image){
+            setImage(image);
+        }
+    };
+
+    const form = useForm<BeerType>({
+        defaultValues: {
+            id: initialValues?.id ?? 0,
+            image: initialValues?.image ?? undefined,
+            name: initialValues?.name ?? "", 
+            type: initialValues?.type ?? "",
+            subType: initialValues?.subType ?? "",
+            rating: initialValues?.rating ?? 0,
+            brewery: initialValues?.brewery ?? "",
+            description: initialValues?.description ?? "",
+            location: initialValues?.location ?? "",
+        }
+    })
+
+    const submitForm = () => {
+        onSubmit({ id, image, name, type, subType, rating, brewery, description, location });
+    };
     
     return (
         <View style={formStyles.mainContainer}>
@@ -212,7 +200,6 @@ const formStyles = StyleSheet.create({
         color: "black",
         fontSize: 16,
         fontWeight: "bold",
-        //marginBottom: 1
     },
     input:{
         alignSelf: "center",
@@ -265,7 +252,6 @@ const formStyles = StyleSheet.create({
         height: 50,
         alignItems: "center",
         justifyContent: "space-between",
-        //zIndex: 1,
     },
     button:{
         marginTop: 10,

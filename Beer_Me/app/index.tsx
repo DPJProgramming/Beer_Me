@@ -6,11 +6,12 @@ import {useBeerList} from "./context/beerListContext";
 
 //fetch beers from backend
 export default function myBeers() {
-    const {beers, setBeers, removeBeerContext} = useBeerList(); //get beers from context
+    const {beers, setBeers, removeBeerContext} = useBeerList(); //expose context for beer list
 
     //const host = `http://localhost:3000`; //for web
     const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
 
+    //fetch beers on initial load
     useEffect(() => {        
         (async () => {
             try{

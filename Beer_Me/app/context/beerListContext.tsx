@@ -6,7 +6,7 @@ import { useContext } from "react";
 type BeerListContextType = {
     beers: BeerType[];
     setBeers: (beers: BeerType[]) => void;
-    addBeerContext: (beer: BeerType) => void;
+    addBeerContext: (beer: BeerType, onClose: () => void) => Promise<void>;
     removeBeerContext: (id: number) => void;
     editBeerContext: (beer: BeerType) => void;
 };
@@ -24,9 +24,18 @@ export function useBeerList() {
 export function BeerListProvider({initialBeers, children}: {initialBeers: BeerType[]} & {children: React.ReactNode}) {
     const [beers, setBeers] = useState<BeerType[]>(initialBeers);
     
-    const addBeer = (newBeer: BeerType) => {
-        const newBeerList = [newBeer, ...beers];
-        setBeers(newBeerList);
+    const addBeer = async (newBeer: BeerType, onClose: () => void) => {
+        const newBeerAdded = await addBeertoDb(newBeer);
+
+        if (!newBeerAdded) {
+            console.error("Failed to add beer to database from beerListContext");
+            return;
+        }
+        else{
+            const newBeerList = [newBeer, ...beers];
+            setBeers(newBeerList);
+            onClose();
+        }
     };
 
     const removeBeer = (id: number) => {
@@ -35,7 +44,9 @@ export function BeerListProvider({initialBeers, children}: {initialBeers: BeerTy
         );
     };
 
-    const editBeer = (updatedBeer: BeerType) => {
+    const editBeer = async (updatedBeer: BeerType) => {
+        await updateInDb(updatedBeer);
+
         setBeers((prevBeers) =>
             prevBeers.map((beer) => {
                 if (beer.id === updatedBeer.id) {
@@ -54,3 +65,83 @@ export function BeerListProvider({initialBeers, children}: {initialBeers: BeerTy
         </BeerListContext.Provider>
     );
 };
+
+async function addBeertoDb(beer: BeerType) {
+    const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
+    const formData = compileBeerData(beer);
+
+    //send to backend
+    const config = {
+        method:"post",
+        body: formData,
+    }
+    const response = await fetch(`${host}/addBeer`, config);
+    const isSuccessful = onSuccess(response, "add");
+
+    if(isSuccessful){
+        const responseData = await response.json();
+        return responseData;
+    }
+    else{
+        return;
+    }
+};
+
+async function updateInDb(beer: BeerType) {
+    const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
+    const formData = compileBeerData(beer);
+
+    const config = {
+        method:"put",
+        body: formData,
+    }
+    const response = await fetch(`${host}/editBeer/${beer.id}`, config);
+    const isSuccessful = onSuccess(response, "update");
+
+    if(isSuccessful){
+        const responseData = await response.json();
+        return responseData;
+    }
+    else{
+        return;
+    }
+}
+
+function compileBeerData(beer: BeerType) {
+    //append data from addBeer form
+    const formData = new FormData();
+    formData.append('name', beer.name);
+    formData.append('type', beer.type ?? '');
+    formData.append('subType', beer.subType ?? '');
+    formData.append('rating', beer.rating.toString());
+    formData.append('brewery', beer.brewery ?? '');
+    formData.append('description', beer.description ?? '');
+    formData.append('location', beer.location ?? '');
+    formData.append('date', new Date().toISOString().split('T')[0]);
+
+    //handle image upload
+    if (beer.image) {
+        const filename = beer.image.split('/').pop() ?? 'upload.heic';
+        const ext = filename.includes('.') ? filename.substring(filename.lastIndexOf('.') + 1).toLowerCase() : 'jpeg';
+        const mimeType = ext === 'jpg' ? 'image/jpeg' : `image/${ext}`;
+
+        formData.append('image', {
+            uri: beer.image,
+            type: mimeType,
+            name: filename,
+        } as any);
+    }
+
+    return formData;
+}
+
+function onSuccess(response: Response, message: string) {
+    if (response && response.ok) {
+        alert(`${message} beer successfull`);
+        return true;
+    }
+    else{
+        alert(`Failed to ${message} beer`);
+        return false;
+    }
+}

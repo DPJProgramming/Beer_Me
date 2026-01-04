@@ -1,12 +1,16 @@
-import {useEffect} from "react";
-import { StyleSheet, View, FlatList} from "react-native";
+import {useEffect, useState} from "react";
+import { StyleSheet, View, FlatList, Modal} from "react-native";
 import Beer from "./components/Beer";
 import {BeerListProvider} from "./context/beerListContext";
 import {useBeerList} from "./context/beerListContext";
+import AddBeer from "./components/AddBeer";
+import { BeerType } from "./types/types";
 
 //fetch beers from backend
 export default function myBeers() {
     const {beers, setBeers, removeBeerContext} = useBeerList(); //expose context for beer list
+    const [isEditVisible, setIsEditVisible] = useState(false);
+    const [selectedBeer, setSelectedBeer] = useState<BeerType | undefined>(undefined);
 
     //const host = `http://localhost:3000`; //for web
     const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
@@ -26,8 +30,20 @@ export default function myBeers() {
     }, []);
     
     // Refresh beer list after delete
-    const refreshAfterDelete = (id: number) => {
+    const deleteBeer = (id: number) => {
         removeBeerContext(id);
+    }
+
+    const updateBeer = (id: number) => {
+        console.log(`Update beer with id: ${id}`);
+    }
+
+    const openUpdateBeer = (beer: BeerType) => {
+        setSelectedBeer(beer);
+        setIsEditVisible(true);
+    }
+    const closeUpdateBeer = () => {
+        setIsEditVisible(false);
     }
 
     return (
@@ -49,13 +65,20 @@ export default function myBeers() {
                                     type={beerType ?? ''}
                                     subType={beer.subType ?? ''}
                                     image={`${host}/img/${beer.image}`}
-                                    onDelete={() => refreshAfterDelete(beer.id)}
+                                    onDelete={() => deleteBeer(beer.id)}
+                                    onUpdate={() => openUpdateBeer(beer)}
                                 >
                                 </Beer>
                             );
                         }}>
-                        
                     </FlatList>
+                    <Modal
+                        animationType="slide" 
+                        visible={selectedBeer !== undefined && isEditVisible} 
+                        onRequestClose={closeUpdateBeer}
+                    >
+                        {selectedBeer && <AddBeer onClose={closeUpdateBeer} beer={selectedBeer}/>}
+                    </Modal>
                 </View>
             </View> 
         </BeerListProvider>

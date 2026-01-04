@@ -6,23 +6,28 @@ import { BeerType } from "../types/types";
 
 type Props = {
     onClose: () => void;
+    beer?: BeerType;
 }
 
-export default function AddBeer( {onClose: closeAddBeer}: Props) {
-    const {addBeerContext} = useBeerList();
+export default function AddBeer( {onClose: closeAddBeer, beer}: Props) {
+    const {addBeerContext, editBeerContext} = useBeerList();
 
     const addBeer = async (values: BeerType, onClose: () => void) => {
         await addBeerContext(values, onClose);
     };
 
+    const editBeer = async (values: BeerType, onClose: () => void) => {
+        await editBeerContext(values, onClose);
+    };
+
     return (
         <SafeAreaView style={addStyles.view}>
             <View style={addStyles.header}>
-                <Text style={addStyles.title}>Pour a New Brew</Text>
+                <Text style={addStyles.title}>{beer ? "Edit Brew" : "Pour a New Brew"}</Text>
             </View>
 
             <View style={addStyles.view}>
-                <BeerForm onSubmit={(values) => addBeer(values, closeAddBeer)} onClose={closeAddBeer} accept={"Add"}/>
+                <BeerForm onSubmit={(values) => beer ? editBeer(values, closeAddBeer) : addBeer(values, closeAddBeer)} onClose={closeAddBeer} accept={beer ? "Edit" : "Add"} initialValues={beer}/>
             </View>
         </SafeAreaView>
     );

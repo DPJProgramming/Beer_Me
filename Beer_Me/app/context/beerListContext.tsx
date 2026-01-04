@@ -8,7 +8,7 @@ type BeerListContextType = {
     setBeers: (beers: BeerType[]) => void;
     addBeerContext: (beer: BeerType, onClose: () => void) => Promise<void>;
     removeBeerContext: (id: number) => void;
-    editBeerContext: (beer: BeerType) => void;
+    editBeerContext: (beer: BeerType, onClose: () => void) => Promise<void>;
 };
 
 export const BeerListContext = createContext<BeerListContextType | undefined>(undefined); 
@@ -44,7 +44,7 @@ export function BeerListProvider({initialBeers, children}: {initialBeers: BeerTy
         );
     };
 
-    const editBeer = async (updatedBeer: BeerType) => {
+    const editBeer = async (updatedBeer: BeerType, onClose: () => void) => {
         await updateInDb(updatedBeer);
 
         setBeers((prevBeers) =>

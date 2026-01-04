@@ -41,7 +41,7 @@ export default function Beer(beer: {id:number, name?: string, type?: string, sub
             <Text>{beer.description}</Text>
             <Text>{beer.location}</Text>
             <Button title="Delete" onPress={() => confirmDelete(beer.id, beer.onDelete)}/>
-            <Button title="Update" onPress={() => beer.onUpdate(beer.id)}/>
+            <Button title="Change" onPress={() => beer.onUpdate(beer.id)}/>
         </View>
     );
 }

@@ -47,41 +47,39 @@ export default function myBeers() {
     }
 
     return (
-        <BeerListProvider initialBeers={beers}>
-            <View style={homeStyles.mainContainer}>
-                <View >
-                    <FlatList
-                        numColumns={2}
-                        data={beers}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({item: beer}) => {
-                            const beerType = (beer.subType && beer.subType.trim().length) ? beer.subType : beer.type;
+        <View style={homeStyles.mainContainer}>
+            <View >
+                <FlatList
+                    numColumns={2}
+                    data={beers}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({item: beer}) => {
+                        const beerType = (beer.subType && beer.subType.trim().length) ? beer.subType : beer.type;
 
-                            return(
-                                <Beer
-                                    id={beer.id}
-                                    name={beer.name ?? ''}
-                                    rating={beer.rating ?? 0}
-                                    type={beerType ?? ''}
-                                    subType={beer.subType ?? ''}
-                                    image={`${host}/img/${beer.image}`}
-                                    onDelete={() => deleteBeer(beer.id)}
-                                    onUpdate={() => openUpdateBeer(beer)}
-                                >
-                                </Beer>
-                            );
-                        }}>
-                    </FlatList>
-                    <Modal
-                        animationType="slide" 
-                        visible={selectedBeer !== undefined && isEditVisible} 
-                        onRequestClose={closeUpdateBeer}
-                    >
-                        {selectedBeer && <AddBeer onClose={closeUpdateBeer} beer={selectedBeer}/>}
-                    </Modal>
-                </View>
-            </View> 
-        </BeerListProvider>
+                        return(
+                            <Beer
+                                id={beer.id}
+                                name={beer.name ?? ''}
+                                rating={beer.rating ?? 0}
+                                type={beerType ?? ''}
+                                subType={beer.subType ?? ''}
+                                image={`${host}/img/${beer.image}`}
+                                onDelete={() => deleteBeer(beer.id)}
+                                onUpdate={() => openUpdateBeer(beer)}
+                            >
+                            </Beer>
+                        );
+                    }}>
+                </FlatList>
+                <Modal
+                    animationType="slide" 
+                    visible={selectedBeer !== undefined && isEditVisible} 
+                    onRequestClose={closeUpdateBeer}
+                >
+                    {selectedBeer && <AddBeer onClose={closeUpdateBeer} beer={selectedBeer}/>}
+                </Modal>
+            </View>
+        </View> 
     );
 }
 

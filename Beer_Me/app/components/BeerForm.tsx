@@ -35,9 +35,9 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
     const [brewery, setBrewery] = useState<string>(initialValues?.brewery ?? "");
     const [description, setDescription] = useState<string>(initialValues?.description ?? "");
     const [location, setLocation] = useState<string>(initialValues?.location ?? "");
-    const [image, setImage] = useState<string | undefined>(undefined);
-    const [name, setName] = useState<string>("");
-    const [type, setType] = useState<string>("");
+    const [image, setImage] = useState<string | undefined>(initialValues?.image ?? undefined);
+    const [name, setName] = useState<string>(initialValues?.name ?? "");
+    const [type, setType] = useState<string>(initialValues?.type ?? "");
 
     const [typeOpen, setTypeOpen] = useState(false);
     const [typeItems, setTypeItems] = useState([
@@ -58,7 +58,7 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
         { label: "Other", value: "Other" }
     ]);
 
-    const [subType, setSubType] = useState<string>("");
+    const [subType, setSubType] = useState<string>(initialValues?.subType ?? "");
     const [subTypeOpen, setSubTypeOpen] = useState(false);
     const [subTypeItems, setSubTypeItems] = useState([
         { label: "Hazy / New England IPA", value: "Hazy / New England IPA" },
@@ -105,7 +105,7 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
             <ScrollView>
                 <Pressable onPress={() => {setSubTypeOpen(false); setTypeOpen(false)}}>
                     <Text style={formStyles.label}>Name *</Text>
-                    <TextInput style={formStyles.input} placeholder="Name" onChangeText={setName} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}}/>
+                    <TextInput style={formStyles.input} placeholder="Name" value={name} onChangeText={setName} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}}/>
 
                     <Text style={formStyles.label}>Photo</Text>
                     <View style={formStyles.imageContainer}>
@@ -163,16 +163,16 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
                     </View>
 
                     <Text style={formStyles.label}>Rating *</Text>
-                    <TextInput style={formStyles.input} placeholder="Rating" keyboardType="numeric" onChangeText={(text) => setRating(Number(text))} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
+                    <TextInput style={formStyles.input} placeholder="Rating" value={rating.toString()} keyboardType="numeric" onChangeText={(text) => setRating(Number(text))} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
 
                     <Text style={formStyles.label}>Brewery</Text>
-                    <TextInput style={formStyles.input} placeholder="Brewery" onChangeText={setBrewery} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
+                    <TextInput style={formStyles.input} placeholder="Brewery" value={brewery} onChangeText={setBrewery} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
 
                     <Text style={formStyles.label}>Description</Text>
-                    <TextInput style={formStyles.input} placeholder="Description" multiline onChangeText={setDescription} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
+                    <TextInput style={formStyles.input} placeholder="Description" value={description} multiline onChangeText={setDescription} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
                 
                     <Text style={formStyles.label}>Location</Text>
-                    <TextInput style={formStyles.input} placeholder="Location" onChangeText={setLocation} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
+                    <TextInput style={formStyles.input} placeholder="Location" value={location} onChangeText={setLocation} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
                 </Pressable>
             </ScrollView>
 

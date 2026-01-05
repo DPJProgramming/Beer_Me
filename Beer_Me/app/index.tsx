@@ -34,10 +34,6 @@ export default function myBeers() {
         removeBeerContext(id);
     }
 
-    const updateBeer = (id: number) => {
-        console.log(`Update beer with id: ${id}`);
-    }
-
     const openUpdateBeer = (beer: BeerType) => {
         setSelectedBeer(beer);
         setIsEditVisible(true);

@@ -45,18 +45,26 @@ export function BeerListProvider({initialBeers, children}: {initialBeers: BeerTy
     };
 
     const editBeer = async (updatedBeer: BeerType, onClose: () => void) => {
-        await updateInDb(updatedBeer);
+        console.log("Editing beer in context:");
+        const beerModified = await updateInDb(updatedBeer);
 
-        setBeers((prevBeers) =>
-            prevBeers.map((beer) => {
-                if (beer.id === updatedBeer.id) {
-                    return { ...beer, ...updatedBeer };
-                }
-                else{
-                    return beer;
-                }
-            })
-        );
+        if (!beerModified) {
+            console.error("Failed to update beer in database from beerListContext");
+            return;
+        }
+        else{
+            setBeers((prevBeers) =>
+                prevBeers.map((beer) => {
+                    if (beer.id === updatedBeer.id) {
+                        return { ...beer, ...updatedBeer };
+                    }
+                    else{
+                        return beer;
+                    }
+                })
+            );
+            onClose();
+        }
     };
     
     return (
@@ -90,12 +98,13 @@ async function addBeertoDb(beer: BeerType) {
 async function updateInDb(beer: BeerType) {
     const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
     const formData = compileBeerData(beer);
+    formData.append('id', beer.id.toString());
 
     const config = {
-        method:"put",
+        method:"post",
         body: formData,
     }
-    const response = await fetch(`${host}/editBeer/${beer.id}`, config);
+    const response = await fetch(`${host}/editBeer`, config);
     const isSuccessful = onSuccess(response, "update");
 
     if(isSuccessful){

@@ -6,29 +6,30 @@ const confirmDelete = (id: number, onDelete: (id: number) => void) => {
         "Confirm Deletion",
         "Are you sure you want to recycle this beer?", [
             { text: "Cancel", style: "cancel", onPress: () => {} },
-            { text: "Delete", style: "destructive", onPress: () => deleteBeer(id, onDelete) }
+            { text: "Delete", style: "destructive", onPress: () => onDelete(id) }
         ]
     );              
 }
 
-const deleteBeer = async (id: number, onDelete: (id: number) => void) => {
-    const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
-    const response = await fetch(`${host}/deleteBeer/${id}`, {method: "post"});
+// const deleteBeer = async (id: number, onDelete: (id: number) => void) => {
+//     const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
+//     const response = await fetch(`${host}/deleteBeer/${id}`, {method: "post"});
 
-    if(response.ok){
-        alert('Beer deleted successfully');
-        onDelete(id);
-    }
-    else{
-        alert('Failed to delete beer. Please try again.');
-    }
-}
+//     if(response.ok){
+//         alert('Beer deleted successfully');
+//         onDelete(id);
+//     }
+//     else{
+//         alert('Failed to delete beer. Please try again.');
+//     }
+// }
 
 export default function Beer(beer: {id:number, name?: string, type?: string, subType?: string,
                                     rating?: number, image?: string, brewery?: string,
                                     description?: string, location?: string,
-                                    onDelete: (id: number) => void}
-                            ){  
+                                    onDelete: (id: number) => void,
+                                    onUpdate: (id: number) => void
+                            }){  
     return (        
         <View style={BeerStyles.container}>
             <Text>{beer.name}</Text>
@@ -40,6 +41,7 @@ export default function Beer(beer: {id:number, name?: string, type?: string, sub
             <Text>{beer.description}</Text>
             <Text>{beer.location}</Text>
             <Button title="Delete" onPress={() => confirmDelete(beer.id, beer.onDelete)}/>
+            <Button title="Change" onPress={() => beer.onUpdate(beer.id)}/>
         </View>
     );
 }

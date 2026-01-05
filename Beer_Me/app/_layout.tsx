@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 import {Modal, View, StyleSheet} from "react-native";
-import { useState, useContext} from "react";
+import { useState} from "react";
 import BeerMeButton from "./components/BeerMeButton";
 import AddBeer from "./components/AddBeer";
 import { BeerListProvider } from "./context/beerListContext";

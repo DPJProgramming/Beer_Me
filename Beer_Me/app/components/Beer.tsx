@@ -1,12 +1,13 @@
 import React from "react";
-import { View, Text, Image, Button, StyleSheet, Alert } from "react-native";
+import { View, Text, Image, Button, StyleSheet, Alert, Pressable } from "react-native";
+import { BeerType } from "../types/types";
 
-const confirmDelete = (id: number, onDelete: (id: number) => void) => {
+const confirmDelete = (onDelete: () => void) => {
     Alert.alert(
         "Confirm Deletion",
         "Are you sure you want to recycle this beer?", [
             { text: "Cancel", style: "cancel", onPress: () => {} },
-            { text: "Delete", style: "destructive", onPress: () => onDelete(id) }
+            { text: "Delete", style: "destructive", onPress: () => onDelete() }
         ]
     );              
 }
@@ -27,21 +28,24 @@ const confirmDelete = (id: number, onDelete: (id: number) => void) => {
 export default function Beer(beer: {id:number, name?: string, type?: string, subType?: string,
                                     rating?: number, image?: string, brewery?: string,
                                     description?: string, location?: string,
-                                    onDelete: (id: number) => void,
-                                    onUpdate: (id: number) => void
+                                    onDelete: () => void,
+                                    onUpdate: () => void,
+                                    onDetails: () => void
                             }){  
     return (        
         <View style={BeerStyles.container}>
-            <Text>{beer.name}</Text>
-            <Text style={BeerStyles.type}>{beer.type}</Text>
-            <Text style={BeerStyles.type}>{beer.subType}</Text>
-            <Text style={BeerStyles.rating}>{`${beer.rating}/5`}</Text>
-            <Image source={{uri: beer.image}} style={BeerStyles.image} />
-            <Text>{beer.brewery}</Text>
-            <Text>{beer.description}</Text>
-            <Text>{beer.location}</Text>
-            <Button title="Delete" onPress={() => confirmDelete(beer.id, beer.onDelete)}/>
-            <Button title="Change" onPress={() => beer.onUpdate(beer.id)}/>
+            <Pressable onPress={() => beer.onDetails()}>
+                <Text>{beer.name}</Text>
+                <Text style={BeerStyles.type}>{beer.type}</Text>
+                <Text style={BeerStyles.type}>{beer.subType}</Text>
+                <Text style={BeerStyles.rating}>{`${beer.rating}/5`}</Text>
+                <Image source={{uri: beer.image}} style={BeerStyles.image} />
+                <Text>{beer.brewery}</Text>
+                <Text>{beer.description}</Text>
+                <Text>{beer.location}</Text>
+            </Pressable>
+            <Button title="Delete" onPress={() => confirmDelete(beer.onDelete)}/>
+            <Button title="Change" onPress={() => beer.onUpdate()}/>
         </View>
     );
 }

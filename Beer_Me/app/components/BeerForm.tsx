@@ -30,12 +30,14 @@ type BeerFormProps = {
 };
 
 export default function BeerForm({ onSubmit, onClose, initialValues, accept }: BeerFormProps) {
+    const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
+
     const [id, setId] = useState<number>(initialValues?.id ?? 0);
     const [rating, setRating] = useState<number>(initialValues?.rating ?? 0);
     const [brewery, setBrewery] = useState<string>(initialValues?.brewery ?? "");
     const [description, setDescription] = useState<string>(initialValues?.description ?? "");
     const [location, setLocation] = useState<string>(initialValues?.location ?? "");
-    const [image, setImage] = useState<string | undefined>(initialValues?.image ?? undefined);
+    const [image, setImage] = useState<string | undefined>(initialValues?.image ? `${host}/img/${initialValues.image}` : undefined);
     const [name, setName] = useState<string>(initialValues?.name ?? "");
     const [type, setType] = useState<string>(initialValues?.type ?? "");
 
@@ -110,7 +112,7 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
                     <Text style={formStyles.label}>Photo</Text>
                     <View style={formStyles.imageContainer}>
                         {image && (
-                            <Image style={formStyles.image} source={{ uri: image }} />
+                            <Image style={formStyles.image} source={{uri: image}} />
                         )}
                         <View style={formStyles.buttonColumn}>
                             <Pressable style={formStyles.imageButton} onPress={pickImage}>

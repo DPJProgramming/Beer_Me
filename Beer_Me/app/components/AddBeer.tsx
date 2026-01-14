@@ -17,7 +17,6 @@ export default function AddBeer( {onClose: closeAddBeer, beer}: Props) {
     };
 
     const editBeer = async (values: BeerType, onClose: () => void) => {
-        console.log("Editing beer in AddBeer component:");
         await editBeerContext(values, onClose);
     };
 

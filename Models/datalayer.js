@@ -61,6 +61,8 @@ const editBeer = (beer) => {
 
     //check if user has defined a new image
     if(beer.image){
+        const existingImage = getImageById(beer.id);
+
         const query = `UPDATE beers 
                     SET 
                         name = ?, 
@@ -84,7 +86,17 @@ const editBeer = (beer) => {
                                     beer.rating, 
                                     beer.image, 
                                     beer.date, 
-                                    beer.id);
+                                    beer.id
+                                );
+        
+        const image = beer.image || existingImage;
+
+        //delete old image file if it's not the placeholder
+        if(image != 'placeholder.png' && image != beer.image){
+            fs.promises.unlink(`./public/img/${image}`);
+        }
+
+        return {...result, image};
     }
     else{
         const query = 
@@ -110,10 +122,10 @@ const editBeer = (beer) => {
                                     beer.location, 
                                     beer.rating, 
                                     beer.date, 
-                                    beer.id);
+                                    beer.id
+                                );
+        return result;
     }
-
-    return result;
 }
 
 const deleteBeer = async (id) => {

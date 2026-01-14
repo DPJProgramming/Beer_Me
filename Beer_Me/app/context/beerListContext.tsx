@@ -53,7 +53,6 @@ export function BeerListProvider({initialBeers, children}: {initialBeers: BeerTy
     };
 
     const editBeer = async (updatedBeer: BeerType, onClose: () => void) => {
-        console.log("Editing beer in context:");
         const beerModified = await updateInDb(updatedBeer);
 
         if (!beerModified) {
@@ -64,6 +63,7 @@ export function BeerListProvider({initialBeers, children}: {initialBeers: BeerTy
             setBeers((prevBeers) =>
                 prevBeers.map((beer) => {
                     if (beer.id === updatedBeer.id) {
+                        updatedBeer.image = beerModified.image;
                         return { ...beer, ...updatedBeer };
                     }
                     else{

@@ -1,6 +1,5 @@
 import {useEffect, useState} from "react";
 import { StyleSheet, View, FlatList, Modal, Button, Pressable, Image, Text, Alert} from "react-native";
-import Beer from "./components/Beer";
 import {useBeerList} from "./context/beerListContext";
 import AddBeer from "./components/AddBeer";
 import { BeerType } from "./types/types";

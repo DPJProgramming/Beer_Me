@@ -3,29 +3,27 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BeerType } from "../types/types";
 import { useState } from "react";
 import { useBeerList } from "../context/beerListContext";
-import Beer from "./Beer";
+import AddBeer from "./AddBeer";
 
 type Props = {
     onClose: () => void;
-    beer: BeerType | undefined;
+    beer: BeerType;
 }
 
 export default function BeerDetails( {onClose: closeBeerDetails, beer}: Props) {
+    console.log(beer);
     if(!beer) {
         return null;
     }
     const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
     const {removeBeerContext} = useBeerList(); //expose context for beer list
     const [isEditVisible, setIsEditVisible] = useState(false);
-    const [isDetailsVisible, setIsDetailsVisible] = useState(false);
-    const [selectedBeer, setSelectedBeer] = useState<BeerType | undefined>(undefined);
 
     const deleteBeer = (id: number) => {
         removeBeerContext(id);
         closeBeerDetails();
     }
-    const openUpdateBeer = (beer: BeerType) => {
-        setSelectedBeer(beer);
+    const openUpdateBeer = () => {
         setIsEditVisible(true);
     }
     const closeUpdateBeer = () => {
@@ -62,38 +60,31 @@ export default function BeerDetails( {onClose: closeBeerDetails, beer}: Props) {
                 <View style={detailStyles.contentCard}>
                     <View style={detailStyles.infoRow}>
                         <Text style={detailStyles.label}>Type:</Text>
-                        <Text style={detailStyles.value}>{beer.type}</Text>
+                        <Text style={detailStyles.value}>
+                            {beer.type}
+                            {beer.subType && `, ${beer.subType}`}
+                            {!beer.type && ' (Tap Edit to add)'}
+                        </Text>
                     </View>
-                    {beer.subType && (
-                        <View style={detailStyles.infoRow}>
-                            <Text style={detailStyles.label}>SubType:</Text>
-                            <Text style={detailStyles.value}>{beer.subType}</Text>
-                        </View>
-                    )}
-                    {beer.brewery && (
-                        <View style={detailStyles.infoRow}>
-                            <Text style={detailStyles.label}>Brewery:</Text>
-                            <Text style={detailStyles.value}>{beer.brewery}</Text>
-                        </View>
-                    )}
-                    {beer.location && (
-                        <View style={detailStyles.infoRow}>
-                            <Text style={detailStyles.label}>Location:</Text>
-                            <Text style={detailStyles.value}>{beer.location}</Text>
-                        </View>
-                    )}
+                    <View style={detailStyles.infoRow}>
+                        <Text style={detailStyles.label}>Brewery:</Text>
+                        <Text style={detailStyles.value}>{beer.brewery || '(Tap Edit to add)'}</Text>
+                    </View>
+                    <View style={detailStyles.infoRow}>
+                        <Text style={detailStyles.label}>Location:</Text>
+                        <Text style={detailStyles.value}>{beer.location || '(Tap Edit to add)'}</Text>
+                    </View>
                 </View>
 
-                {beer.description && (
-                    <View style={detailStyles.contentCard}>
-                        <Text style={detailStyles.label}>Description</Text>
-                        <Text style={detailStyles.description}>{beer.description}</Text>
-                    </View>
-                )}
+                <View style={detailStyles.contentCard}>
+                    <Text style={detailStyles.label}>Description</Text>
+                    <Text style={detailStyles.description}>{beer.description || '(Tap Edit to add)'}</Text>
+                </View>
 
                 <View style={detailStyles.buttonContainer}>
                     <View style={detailStyles.button}>
-                        <Button title="Edit Beer" onPress={() => openUpdateBeer(beer)} color="#2905ba"/>
+                        <Button title="Edit Beer" onPress={() => openUpdateBeer()} color="#2905ba"/>
+
                     </View>
                     <View style={detailStyles.button}>
                         <Button title="Delete" onPress={() => confirmDelete(beer.id)} color="#d32f2f"/>
@@ -103,6 +94,13 @@ export default function BeerDetails( {onClose: closeBeerDetails, beer}: Props) {
                 <View style={detailStyles.closeButtonContainer}>
                     <Button title="Close" onPress={closeBeerDetails} color="#666"/>
                 </View>
+                <Modal
+                    animationType="slide" 
+                    visible={ isEditVisible} 
+                    onRequestClose={closeUpdateBeer}
+                >
+                    {<AddBeer onClose={closeUpdateBeer} beer={beer}/>}
+                </Modal>
             </ScrollView>
         </SafeAreaView>
     );

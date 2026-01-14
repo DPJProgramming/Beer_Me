@@ -1,15 +1,15 @@
 import {useEffect, useState} from "react";
-import { StyleSheet, View, FlatList, Modal} from "react-native";
-import Beer from "./components/Beer";
-import {BeerListProvider} from "./context/beerListContext";
+import { StyleSheet, View, FlatList, Modal, Button, Pressable, Image, Text, Alert} from "react-native";
 import {useBeerList} from "./context/beerListContext";
 import AddBeer from "./components/AddBeer";
 import { BeerType } from "./types/types";
+import BeerDetails from "./components/BeerDetails";
 
 //fetch beers from backend
 export default function myBeers() {
     const {beers, setBeers, removeBeerContext} = useBeerList(); //expose context for beer list
     const [isEditVisible, setIsEditVisible] = useState(false);
+    const [isDetailsVisible, setIsDetailsVisible] = useState(false);
     const [selectedBeer, setSelectedBeer] = useState<BeerType | undefined>(undefined);
 
     //const host = `http://localhost:3000`; //for web
@@ -29,17 +29,33 @@ export default function myBeers() {
         })()
     }, []);
     
-    // Refresh beer list after delete
+    // use context for CRUD operations
     const deleteBeer = (id: number) => {
         removeBeerContext(id);
     }
-
     const openUpdateBeer = (beer: BeerType) => {
         setSelectedBeer(beer);
         setIsEditVisible(true);
     }
     const closeUpdateBeer = () => {
         setIsEditVisible(false);
+    }
+    const openBeerDetails = (beer: BeerType) => {
+        setSelectedBeer(beer);
+        setIsDetailsVisible(true);
+    }
+    const closeBeerDetails = () => {
+        setIsDetailsVisible(false);
+    }
+
+    const confirmDelete = (id: number) => {
+        Alert.alert(
+            "Confirm Deletion",
+            "Are you sure you want to recycle this beer?", [
+                { text: "Cancel", style: "cancel", onPress: () => {} },
+                { text: "Delete", style: "destructive", onPress: () => deleteBeer(id) }
+            ]
+        );              
     }
 
     return (
@@ -53,17 +69,22 @@ export default function myBeers() {
                         const beerType = (beer.subType && beer.subType.trim().length) ? beer.subType : beer.type;
 
                         return(
-                            <Beer
-                                id={beer.id}
-                                name={beer.name ?? ''}
-                                rating={beer.rating ?? 0}
-                                type={beerType ?? ''}
-                                subType={beer.subType ?? ''}
-                                image={`${host}/img/${beer.image}`}
-                                onDelete={() => deleteBeer(beer.id)}
-                                onUpdate={() => openUpdateBeer(beer)}
-                            >
-                            </Beer>
+                            <View style={homeStyles.beerContainer}>
+                                <Pressable onPress={() => openBeerDetails(beer)}>
+                                    <View>
+                                        <Text>{beer.name}</Text>
+                                        <Text>{beer.rating}</Text>
+                                    </View>
+                                    <View>
+                                        <Image 
+                                            source={{uri: `${host}/img/${beer.image}`}} 
+                                            style={homeStyles.image}
+                                        />
+                                    </View>
+                                </Pressable>
+                                <Button title="Delete" onPress={() => confirmDelete(beer.id)}/>
+                                <Button title="Change" onPress={() => openUpdateBeer(beer)}/>
+                            </View>
                         );
                     }}>
                 </FlatList>
@@ -73,6 +94,13 @@ export default function myBeers() {
                     onRequestClose={closeUpdateBeer}
                 >
                     {selectedBeer && <AddBeer onClose={closeUpdateBeer} beer={selectedBeer}/>}
+                </Modal>
+                <Modal
+                    animationType="slide" 
+                    visible={selectedBeer !== undefined && isDetailsVisible} 
+                    onRequestClose={closeBeerDetails}
+                >
+                    {selectedBeer && <BeerDetails onClose={closeBeerDetails} beer={selectedBeer}/>}
                 </Modal>
             </View>
         </View> 
@@ -90,4 +118,19 @@ const homeStyles = StyleSheet.create({
     mainContainer:{
         flex: 1,
     },
+    beerContainer:{
+        flex: 1,
+        borderWidth: 1,
+        borderColor: 'black',
+        borderStyle: 'solid',
+        padding: 12,
+        marginBottom: 12,
+        borderRadius: 8,
+        backgroundColor: '#fff'
+    },
+    image: {
+        width: 100,
+        height: 100,
+        borderRadius: 8,
+    }
 });

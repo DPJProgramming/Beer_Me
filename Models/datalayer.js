@@ -45,7 +45,7 @@ const addBeer = async (beer) => {
                                 beer.date
     );
     
-    return {...result, image: beer.image, };
+    return {...result, image: beer.image, id: result.lastInsertRowid};
 }
 
 const getBeerById = (id) => {

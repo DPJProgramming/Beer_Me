@@ -1,4 +1,4 @@
-import datalayer from '../Models/datalayer.js';
+import datalayer from '../models/datalayer.js';
 import multer from "multer";
 
 

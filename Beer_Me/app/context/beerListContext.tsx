@@ -65,7 +65,7 @@ export function BeerListProvider({initialBeers, children}: {initialBeers: BeerTy
             setBeers((prevBeers) =>
                 prevBeers.map((beer) => {
                     if (beer.id === updatedBeer.id) {
-                        updatedBeer.image = beerModified.image;
+                        updatedBeer.image = beerModified.image ?? beer.image;
                         return { ...beer, ...updatedBeer };
                     }
                     else{
@@ -116,9 +116,10 @@ function compileBeerData(beer: BeerType) {
     formData.append('location', beer.location ?? '');
     formData.append('date', new Date().toISOString().split('T')[0]);
 
-    //handle image upload
-    if (beer.image) {
-        const filename = beer.image.split('/').pop() ?? 'upload.heic';
+    //handle image upload only when a new local image is selected
+    const isLocalImage = beer.image && (beer.image.startsWith('file:') || beer.image.startsWith('content:'));
+    if (isLocalImage) {
+        const filename = beer.image?.split('/').pop() ?? 'upload.jpeg';
         const ext = filename.includes('.') ? filename.substring(filename.lastIndexOf('.') + 1).toLowerCase() : 'jpeg';
         const mimeType = ext === 'jpg' ? 'image/jpeg' : `image/${ext}`;
 
@@ -155,10 +156,12 @@ async function sendRequest(requestMethod: string, endpoint: string, message: str
     }
 
     const response = await fetch(`${host}/${endpoint}`, config);
+    console.log('Response:', response);
     const isSuccessful = onSuccess(response, message);
 
     if(isSuccessful){
         const responseData = await response.json();
+        console.log('Response Data:', responseData);
         return responseData;
     }
     else{

@@ -43,8 +43,9 @@ const addBeer = async (beer) => {
                                 beer.rating, 
                                 beer.image, 
                                 beer.date
-                            );
-    return result;   
+    );
+    
+    return {...result, image: beer.image, };
 }
 
 const getBeerById = (id) => {
@@ -96,7 +97,7 @@ const editBeer = (beer) => {
             fs.promises.unlink(`./public/img/${image}`);
         }
 
-        return {...result, image};
+        return {...result, image: image};
     }
     else{
         const query = 

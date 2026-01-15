@@ -32,6 +32,7 @@ export function BeerListProvider({initialBeers, children}: {initialBeers: BeerTy
             return;
         }
         else{
+            newBeer.image = newBeerAdded.image;
             const newBeerList = [newBeer, ...beers];
             setBeers(newBeerList);
             onClose();

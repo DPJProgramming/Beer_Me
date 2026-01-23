@@ -40,6 +40,7 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
     const [image, setImage] = useState<string | undefined>(initialValues?.image ? `${host}/img/${initialValues.image}` : undefined);
     const [name, setName] = useState<string>(initialValues?.name ?? "");
     const [type, setType] = useState<string>(initialValues?.type ?? "");
+    const [date, setDate] = useState<string>(initialValues?.date ?? new Date().toISOString().split('T')[0]);
 
     const [typeOpen, setTypeOpen] = useState(false);
     const [typeItems, setTypeItems] = useState([
@@ -95,11 +96,12 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
             brewery: initialValues?.brewery ?? "",
             description: initialValues?.description ?? "",
             location: initialValues?.location ?? "",
+            date: initialValues?.date ?? new Date().toISOString().split('T')[0],
         }
     })
 
     const submitForm = () => {
-        onSubmit({ id, image, name, type, subType, rating, brewery, description, location });
+        onSubmit({ id, image, name, type, subType, rating, brewery, description, location, date});
     };
     
     return (

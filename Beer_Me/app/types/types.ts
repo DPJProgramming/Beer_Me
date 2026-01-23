@@ -8,5 +8,6 @@ export type BeerType = {
     brewery?: string;
     description?: string;
     location?: string;
+    date: string;
 };
 

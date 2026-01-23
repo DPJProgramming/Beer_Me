@@ -122,6 +122,10 @@ export default function myBeers() {
                                             style={homeStyles.image}
                                         />
                                     </View>
+                                    <View>
+                                        <Text>{beerType}</Text>
+                                        <Text>{beer.brewery}</Text>
+                                    </View>
                                 </Pressable>
                                 <Button title="Delete" onPress={() => confirmDelete(beer.id)}/>
                                 <Button title="Change" onPress={() => openUpdateBeer(beer)}/>

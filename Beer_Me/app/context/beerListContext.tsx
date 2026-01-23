@@ -40,6 +40,7 @@ export function BeerListProvider({children}:  {children: React.ReactNode}) {
             newBeer.image = newBeerAdded.image;
             const newBeerList = [newBeer, ...beers];
             setBeers(newBeerList);
+            setOriginalBeers(newBeerList);
             onClose();
         }
     };
@@ -52,10 +53,9 @@ export function BeerListProvider({children}:  {children: React.ReactNode}) {
             return;
         }
 
-        //set change in ui
-        setBeers((prevBeers) =>
-            prevBeers.filter((beer: { id: number }) => beer.id !== id)
-        );
+        const newBeers = beers.filter((beer) => beer.id !== id);
+        setBeers(newBeers);
+        setOriginalBeers(newBeers);
     };
 
     const editBeer = async (updatedBeer: BeerType, onClose: () => void) => {
@@ -66,8 +66,7 @@ export function BeerListProvider({children}:  {children: React.ReactNode}) {
             return;
         }
         else{
-            setBeers((prevBeers) =>
-                prevBeers.map((beer) => {
+            const newBeerList = beers.map((beer) => {
                     if (beer.id === updatedBeer.id) {
                         updatedBeer.image = beerModified.image ?? beer.image;
                         return { ...beer, ...updatedBeer };
@@ -75,8 +74,9 @@ export function BeerListProvider({children}:  {children: React.ReactNode}) {
                     else{
                         return beer;
                     }
-                })
-            );
+            });
+            setBeers(newBeerList);
+            setOriginalBeers(newBeerList);
             onClose();
         }
     };

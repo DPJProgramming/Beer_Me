@@ -13,6 +13,7 @@ export default function myBeers() {
     const [isDetailsVisible, setIsDetailsVisible] = useState(false);
     const [selectedBeer, setSelectedBeer] = useState<BeerType | undefined>(undefined);
     const [sortOpen, setSortOpen] = useState(false);
+    const [sortBy, setSortBy] = useState<string>("date desc");
     const [sortOptions] = useState([
         { label: "name", value: "name" },
         { label: "rating", value: "rating" },
@@ -21,7 +22,6 @@ export default function myBeers() {
         { label: "type", value: "type" },
         { label: "brewery", value: "brewery" },
     ]);
-    const [sortBy, setSortBy] = useState<string>("date desc");
 
     //const host = `http://localhost:3000`; //for web
     const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
@@ -81,7 +81,7 @@ export default function myBeers() {
     return (
         <View style={homeStyles.mainContainer}>
             <Text style={homeStyles.label}>Sort</Text>
-            <View style={{ zIndex: 2 }}>
+            <View style={{ zIndex: 5000 }}>
                         <DropDownPicker
                             open={sortOpen}
                             value={sortBy}
@@ -89,14 +89,15 @@ export default function myBeers() {
                             setOpen={setSortOpen}
                             setValue={setSortBy}
                             listMode="SCROLLVIEW"
-                            style={[homeStyles.input, { zIndex: 3 }]}
+                            style={[homeStyles.input, { zIndex: 5000 }]}
+                            dropDownContainerStyle={{ zIndex: 5000, elevation: 5000 }}
                             labelStyle={{ textAlign: 'center' }}
                             listItemLabelStyle={{ textAlign: 'center' }}
                             onChangeValue={onSort}
                         />
             </View>
             <Text style={homeStyles.label}>Search</Text>
-            <View style={{zIndex: 2}}>
+            <View style={{zIndex: 1}}>
                 <TextInput style={homeStyles.input}
                     onChangeText={onSearch}
                 ></TextInput>

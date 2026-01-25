@@ -110,12 +110,16 @@ export function BeerListProvider({children}:  {children: React.ReactNode}) {
 
     const searchBeers = (searchFor: string) => {
         const searchTerm = searchFor.toLowerCase().trim();
+
+        if(searchTerm === ""){
+            setBeers(originalBeers);
+            return;
+        }
     
         const filteredBeers = originalBeers.filter((beer) => 
                             beer.name.toLowerCase().startsWith(searchTerm)
                          || beer.type?.toLowerCase().startsWith(searchTerm)
-                         || beer.brewery?.toLowerCase().startsWith(searchTerm))
-                         ?? ["No Results"] as unknown as BeerType[];
+                         || beer.brewery?.toLowerCase().startsWith(searchTerm));
 
         setBeers(filteredBeers);
     }

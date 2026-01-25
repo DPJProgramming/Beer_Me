@@ -6,9 +6,12 @@ import { useContext } from "react";
 type BeerListContextType = {
     beers: BeerType[];
     setBeers: (beers: BeerType[]) => void;
+    setOriginalBeers: (beers: BeerType[]) => void;
     addBeerContext: (beer: BeerType, onClose: () => void) => Promise<void>;
     removeBeerContext: (id: number) => Promise<void>;
     editBeerContext: (beer: BeerType, onClose: () => void) => Promise<void>;
+    sortBeerContext: (sortBy: string) => void;
+    searchBeerContext: (searchFor: string) => void;
 };
 
 export const BeerListContext = createContext<BeerListContextType | undefined>(undefined); 
@@ -21,8 +24,9 @@ export function useBeerList() {
     return context;
 }
 
-export function BeerListProvider({initialBeers, children}: {initialBeers: BeerType[]} & {children: React.ReactNode}) {
-    const [beers, setBeers] = useState<BeerType[]>(initialBeers);
+export function BeerListProvider({children}:  {children: React.ReactNode}) {
+    let [beers, setBeers] = useState<BeerType[]>([]);
+    const[originalBeers, setOriginalBeers] = useState<BeerType[]>([]);
     
     const addBeer = async (newBeer: BeerType, onClose: () => void) => {
         const newBeerAdded = await addBeertoDb(newBeer);
@@ -36,6 +40,7 @@ export function BeerListProvider({initialBeers, children}: {initialBeers: BeerTy
             newBeer.image = newBeerAdded.image;
             const newBeerList = [newBeer, ...beers];
             setBeers(newBeerList);
+            setOriginalBeers(newBeerList);
             onClose();
         }
     };
@@ -48,10 +53,9 @@ export function BeerListProvider({initialBeers, children}: {initialBeers: BeerTy
             return;
         }
 
-        //set change in ui
-        setBeers((prevBeers) =>
-            prevBeers.filter((beer: { id: number }) => beer.id !== id)
-        );
+        const newBeers = beers.filter((beer) => beer.id !== id);
+        setBeers(newBeers);
+        setOriginalBeers(newBeers);
     };
 
     const editBeer = async (updatedBeer: BeerType, onClose: () => void) => {
@@ -62,8 +66,7 @@ export function BeerListProvider({initialBeers, children}: {initialBeers: BeerTy
             return;
         }
         else{
-            setBeers((prevBeers) =>
-                prevBeers.map((beer) => {
+            const newBeerList = beers.map((beer) => {
                     if (beer.id === updatedBeer.id) {
                         updatedBeer.image = beerModified.image ?? beer.image;
                         return { ...beer, ...updatedBeer };
@@ -71,15 +74,68 @@ export function BeerListProvider({initialBeers, children}: {initialBeers: BeerTy
                     else{
                         return beer;
                     }
-                })
-            );
+            });
+            setBeers(newBeerList);
+            setOriginalBeers(newBeerList);
             onClose();
         }
     };
+
+    const sortBeer = (sortBy: string) => {
+       switch(sortBy){
+            case "name":
+                beers = beers.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+            case "rating": //default sort for home page
+                beers = beers.sort((a, b) => b.rating - a.rating);
+                break;
+            case "date asc":// default sort for myBeers page
+                beers = beers.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+                break;
+            case "date desc":
+                beers = beers.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+                break;
+            case "type":
+                beers = beers.sort((a, b) => (a.type ?? "").localeCompare(b.type ?? ""));
+                break;
+            case "brewery":
+                beers = beers.sort((a, b) => (a.brewery ?? "").localeCompare(b.brewery ?? ""));
+                break;
+            default:
+                beers = beers;
+        }
+
+        setBeers([...beers]);
+    }
+
+    const searchBeers = (searchFor: string) => {
+        const searchTerm = searchFor.toLowerCase().trim();
+
+        if(searchTerm === ""){
+            setBeers(originalBeers);
+            return;
+        }
+    
+        const filteredBeers = originalBeers.filter((beer) => 
+                            beer.name.toLowerCase().startsWith(searchTerm)
+                         || beer.type?.toLowerCase().startsWith(searchTerm)
+                         || beer.brewery?.toLowerCase().startsWith(searchTerm));
+
+        setBeers(filteredBeers);
+    }
     
     return (
-        <BeerListContext.Provider value={{beers, setBeers, addBeerContext: addBeer, removeBeerContext: removeBeer, editBeerContext: editBeer}}>
-            {children}
+        <BeerListContext.Provider value={{
+                                            beers, 
+                                            setBeers, 
+                                            setOriginalBeers,
+                                            addBeerContext: addBeer, 
+                                            removeBeerContext: removeBeer, 
+                                            editBeerContext: editBeer, 
+                                            sortBeerContext: sortBeer,
+                                            searchBeerContext: searchBeers
+                                        }}>
+                                        {children}
         </BeerListContext.Provider>
     );
 };

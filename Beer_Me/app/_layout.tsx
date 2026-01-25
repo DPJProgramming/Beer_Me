@@ -16,7 +16,7 @@ export default function RootLayout() {
     }
 
     return (
-        <BeerListProvider initialBeers={[]}>
+        <BeerListProvider>
             <View style={rootStyles.mainContainer}>
                 <Stack>
                     <Stack.Screen name="index" options={{headerShown: true}} />

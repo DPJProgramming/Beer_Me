@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
-import { StyleSheet, View, FlatList, Modal, Button, Pressable, Image, Text, Alert} from "react-native";
+import { StyleSheet, View, FlatList, Modal, Button, Pressable, Image, Text, Alert, TextInput} from "react-native";
+import DropDownPicker from 'react-native-dropdown-picker';
 import {useBeerList} from "./context/beerListContext";
 import AddBeer from "./components/AddBeer";
 import { BeerType } from "./types/types";
@@ -7,10 +8,20 @@ import BeerDetails from "./components/BeerDetails";
 
 //fetch beers from backend
 export default function myBeers() {
-    const {beers, setBeers, removeBeerContext} = useBeerList(); //expose context for beer list
+    const {beers, setBeers, removeBeerContext, sortBeerContext, searchBeerContext, setOriginalBeers} = useBeerList(); //expose context for beer list
     const [isEditVisible, setIsEditVisible] = useState(false);
     const [isDetailsVisible, setIsDetailsVisible] = useState(false);
     const [selectedBeer, setSelectedBeer] = useState<BeerType | undefined>(undefined);
+    const [sortOpen, setSortOpen] = useState(false);
+    const [sortBy, setSortBy] = useState<string>("date desc");
+    const [sortOptions] = useState([
+        { label: "name", value: "name" },
+        { label: "rating", value: "rating" },
+        { label: "date asc", value: "date asc" },
+        { label: "date desc", value: "date desc" },
+        { label: "type", value: "type" },
+        { label: "brewery", value: "brewery" },
+    ]);
 
     //const host = `http://localhost:3000`; //for web
     const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
@@ -21,6 +32,7 @@ export default function myBeers() {
             try{
                 const beersData = await getBeers(host);
                 setBeers(beersData);
+                setOriginalBeers(beersData);
             }
             catch(err){
                 console.error(err);
@@ -28,7 +40,17 @@ export default function myBeers() {
             }
         })()
     }, []);
-    
+
+    const confirmDelete = (id: number) => {
+        Alert.alert(
+            "Confirm Deletion",
+            "Are you sure you want to recycle this beer?", [
+                { text: "Cancel", style: "cancel", onPress: () => {} },
+                { text: "Delete", style: "destructive", onPress: () => deleteBeer(id) }
+            ]
+        );              
+    }
+
     // use context for CRUD operations
     const deleteBeer = (id: number) => {
         removeBeerContext(id);
@@ -48,19 +70,39 @@ export default function myBeers() {
         setIsDetailsVisible(false);
     }
 
-    const confirmDelete = (id: number) => {
-        Alert.alert(
-            "Confirm Deletion",
-            "Are you sure you want to recycle this beer?", [
-                { text: "Cancel", style: "cancel", onPress: () => {} },
-                { text: "Delete", style: "destructive", onPress: () => deleteBeer(id) }
-            ]
-        );              
+    //use context for search and sort
+    const onSearch = (term: string) => {
+        searchBeerContext(term);
+    }
+    const onSort = () => {
+        sortBeerContext(sortBy);
     }
 
     return (
         <View style={homeStyles.mainContainer}>
-            <View >
+            <Text style={homeStyles.label}>Sort</Text>
+            <View style={{ zIndex: 5000 }}>
+                        <DropDownPicker
+                            open={sortOpen}
+                            value={sortBy}
+                            items={sortOptions}
+                            setOpen={setSortOpen}
+                            setValue={setSortBy}
+                            listMode="SCROLLVIEW"
+                            style={[homeStyles.input, { zIndex: 5000 }]}
+                            dropDownContainerStyle={{ zIndex: 5000, elevation: 5000 }}
+                            labelStyle={{ textAlign: 'center' }}
+                            listItemLabelStyle={{ textAlign: 'center' }}
+                            onChangeValue={onSort}
+                        />
+            </View>
+            <Text style={homeStyles.label}>Search</Text>
+            <View style={{zIndex: 1}}>
+                <TextInput style={homeStyles.input}
+                    onChangeText={onSearch}
+                ></TextInput>
+            </View>
+            <View style={homeStyles.beerListContainer}>
                 <FlatList
                     numColumns={2}
                     data={beers}
@@ -80,6 +122,10 @@ export default function myBeers() {
                                             source={{uri: `${host}/img/${beer.image}`}} 
                                             style={homeStyles.image}
                                         />
+                                    </View>
+                                    <View>
+                                        <Text>{beerType}</Text>
+                                        <Text>{beer.brewery}</Text>
                                     </View>
                                 </Pressable>
                                 <Button title="Delete" onPress={() => confirmDelete(beer.id)}/>
@@ -118,6 +164,10 @@ const homeStyles = StyleSheet.create({
     mainContainer:{
         flex: 1,
     },
+    beerListContainer:{
+        flex: 1,
+        padding: 12,
+    },
     beerContainer:{
         flex: 1,
         borderWidth: 1,
@@ -132,5 +182,21 @@ const homeStyles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 8,
+    },
+    input:{
+        alignSelf: "center",
+        height: 40,
+        width: "90%",
+        borderColor: "gray",
+        borderWidth: 1,
+        marginBottom: 25,
+        marginTop: 4,
+        paddingHorizontal: 8
+    },
+    label:{
+        paddingLeft: 20,
+        color: "black",
+        fontSize: 16,
+        fontWeight: "bold",
     }
 });

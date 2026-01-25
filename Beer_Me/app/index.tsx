@@ -102,7 +102,7 @@ export default function myBeers() {
                     onChangeText={onSearch}
                 ></TextInput>
             </View>
-            <View >
+            <View style={homeStyles.beerListContainer}>
                 <FlatList
                     numColumns={2}
                     data={beers}
@@ -163,6 +163,10 @@ async function getBeers(host : string){
 const homeStyles = StyleSheet.create({
     mainContainer:{
         flex: 1,
+    },
+    beerListContainer:{
+        flex: 1,
+        padding: 12,
     },
     beerContainer:{
         flex: 1,

@@ -119,6 +119,7 @@ export function BeerListProvider({children}:  {children: React.ReactNode}) {
         const filteredBeers = originalBeers.filter((beer) => 
                             beer.name.toLowerCase().startsWith(searchTerm)
                          || beer.type?.toLowerCase().startsWith(searchTerm)
+                         || beer.subType?.toLowerCase().startsWith(searchTerm)
                          || beer.brewery?.toLowerCase().startsWith(searchTerm));
 
         setBeers(filteredBeers);

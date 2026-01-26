@@ -44,38 +44,102 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
 
     const [typeOpen, setTypeOpen] = useState(false);
     const [typeItems, setTypeItems] = useState([
-        { label: "IPA", value: "IPA" },
-        { label: "Blonde", value: "Blonde" },
-        { label: "Bock", value: "Bock" },
-        { label: "Brown", value: "Brown" },
-        { label: "Lager", value: "Lager" },
-        { label: "Pilsner", value: "Pilsner" },
-        { label: "Pale Ale", value: "Pale Ale" },
         { label: "India Pale Ale (IPA)", value: "India Pale Ale (IPA)" },
+        { label: "Pale Ale", value: "Pale Ale" },
         { label: "Wheat Beer", value: "Wheat Beer" },
-        { label: "Amber Ale", value: "Amber Ale" },
-        { label: "Stout", value: "Stout" },
-        { label: "Porter", value: "Porter" },
+        { label: "Lager", value: "Lager" },
+        { label: "Amber/Red Ale", value: "Amber/Red Ale" },
         { label: "Brown Ale", value: "Brown Ale" },
-        { label: "Blonde Ale", value: "Blonde Ale" },
+        { label: "Porter", value: "Porter" },
+        { label: "Stout", value: "Stout" },
         { label: "Other", value: "Other" }
     ]);
 
     const [subType, setSubType] = useState<string>(initialValues?.subType ?? "");
     const [subTypeOpen, setSubTypeOpen] = useState(false);
-    const [subTypeItems, setSubTypeItems] = useState([
-        { label: "Hazy / New England IPA", value: "Hazy / New England IPA" },
-        { label: "West Coast IPA", value: "West Coast IPA" },
-        { label: "American Pale Ale (APA)", value: "American Pale Ale (APA)" },
-        { label: "Hefeweizen", value: "Hefeweizen" },
-        { label: "Belgian Witbier", value: "Belgian Witbier" },
-        { label: "Dry Stout", value: "Dry Stout" },
-        { label: "Milk Stout (Sweet Stout)", value: "Milk Stout (Sweet Stout)" },
-        { label: "Vienna Lager", value: "Vienna Lager" },
-        { label: "Märzen / Oktoberfest", value: "Märzen / Oktoberfest" },
-        { label: "Doppelbock", value: "Doppelbock" },
-        { label: "Other", value: "Other" }
-    ]);
+    const [subTypeItems, setSubTypeItems] = useState<{ label: string; value: string }[]>([]);
+
+    const setSubTypeValues = (selectedType: string) => {
+        let items: { label: string; value: string }[] = [];
+
+        switch (selectedType) {
+            case "India Pale Ale (IPA)":
+                items = [
+                    { label: "Hazy / New England IPA", value: "Hazy / New England IPA" },
+                    { label: "West Coast IPA", value: "West Coast IPA" },
+                    { label: "Session IPA", value: "Session IPA" },
+                    { label: "Other", value: "Other" }
+                ];
+                break;
+            case "Pale Ale":
+                items = [
+                    { label: "American Pale Ale (APA)", value: "American Pale Ale (APA)" },
+                    { label: "English Pale Ale", value: "English Pale Ale" },
+                    { label: "Blonde Ale", value: "Blonde Ale" },
+                    { label: "Other", value: "Other" },
+                ];
+                break;
+            case "Wheat Beer":
+                items = [
+                    { label: "Hefeweizen", value: "Hefeweizen" },
+                    { label: "American Wheat Beer", value: "American Wheat Beer" },
+                    { label: "Belgian Witbier", value: "Belgian Witbier" },
+                    { label: "Other", value: "Other" }
+                ];
+                break;
+            case "Lager":
+                items = [
+                    { label: "Pilsner", value: "Pilsner" },
+                    { label: "Amber/Vienna", value: "Amber/Vienna" },
+                    { label: "Helles", value: "Helles" },
+                    { label: "Märzen / Oktoberfest", value: "Märzen / Oktoberfest" },
+                    { label: "Doppelbock", value: "Doppelbock" },
+                    { label: "Other", value: "Other" },
+                ]
+                break;
+            case "Amber/Red Ale":
+                items = [
+                    { label: "Irish Red Ale", value: "Irish Red Ale" },
+                    { label: "American Amber Ale", value: "American Amber Ale" },
+                    { label: "Other", value: "Other" },
+                ];
+                break;
+            case "Brown Ale":
+                items = [
+                    { label: "American Brown Ale", value: "American Brown Ale" },
+                    { label: "English Brown Ale", value: "English Brown Ale" },
+                    { label: "Dark Brown/Belgian Ale", value: "Dark Brown/Belgian Ale" },
+                    { label: "Other", value: "Other" }
+                ];
+                break;
+            case "Porter":
+                items = [
+                    { label: "English Porter", value: "English Porter" },
+                    { label: "Robust Porter", value: "Robust Porter" },
+                    { label: "Baltic Porter", value: "Baltic Porter" },
+                    { label: "Other", value: "Other" }
+                ];
+                break;
+            case "Stout":
+                items = [
+                    { label: "Dry Stout", value: "Dry Stout" },
+                    { label: "Milk Stout (Sweet Stout)", value: "Milk Stout (Sweet Stout)" },
+                    { label: "Imperial Stout", value: "Imperial Stout" },
+                    { label: "Other", value: "Other" }
+                ];
+                break;
+            case "Other":
+                items = [
+                    { label: "Other", value: "Other" },
+                ];
+                break;
+            default:
+                items = [];
+        }
+
+        setSubTypeItems(items);
+        setSubType("");
+    };
 
     const pickImage = async () => {
         const image = await getImage();
@@ -138,6 +202,7 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
                             items={typeItems}
                             setOpen={setTypeOpen}
                             setValue={setType}
+                            onChangeValue={(selectedType) => setSubTypeValues(selectedType as string)}
                             setItems={setTypeItems}
                             placeholder="What type of beer is this?"
                             listMode="SCROLLVIEW"

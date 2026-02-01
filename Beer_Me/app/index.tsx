@@ -80,8 +80,10 @@ export default function myBeers() {
 
     return (
         <View style={homeStyles.mainContainer}>
-            <Text style={homeStyles.label}>Sort</Text>
-            <View style={{ zIndex: 5000 }}>
+            <View style={homeStyles.searchSortContainer}>
+                <View style={homeStyles.searchSortColumn}>
+                    <Text style={homeStyles.label}>Sort</Text>
+                    <View style={{ zIndex: 5000 }}>
                         <DropDownPicker
                             open={sortOpen}
                             value={sortBy}
@@ -89,18 +91,22 @@ export default function myBeers() {
                             setOpen={setSortOpen}
                             setValue={setSortBy}
                             listMode="SCROLLVIEW"
-                            style={[homeStyles.input, { zIndex: 5000 }]}
+                            style={[homeStyles.inputSmall, { zIndex: 5000 }]}
                             dropDownContainerStyle={{ zIndex: 5000, elevation: 5000 }}
                             labelStyle={{ textAlign: 'center' }}
                             listItemLabelStyle={{ textAlign: 'center' }}
                             onChangeValue={onSort}
                         />
-            </View>
-            <Text style={homeStyles.label}>Search</Text>
-            <View style={{zIndex: 1}}>
-                <TextInput style={homeStyles.input}
-                    onChangeText={onSearch}
-                ></TextInput>
+                    </View>
+                </View>
+                <View style={homeStyles.searchSortColumn}>
+                    <Text style={homeStyles.label}>Search</Text>
+                    <View style={{zIndex: 1}}>
+                        <TextInput style={homeStyles.inputSmall}
+                            onChangeText={onSearch}
+                        ></TextInput>
+                    </View>
+                </View>
             </View>
             <View style={homeStyles.beerListContainer}>
                 <FlatList
@@ -164,6 +170,15 @@ const homeStyles = StyleSheet.create({
     mainContainer:{
         flex: 1,
     },
+    searchSortContainer:{
+        flexDirection: 'row',
+        paddingHorizontal: 12,
+        paddingVertical: 12,
+        gap: 12,
+    },
+    searchSortColumn:{
+        flex: 1,
+    },
     beerListContainer:{
         flex: 1,
         padding: 12,
@@ -193,10 +208,18 @@ const homeStyles = StyleSheet.create({
         marginTop: 4,
         paddingHorizontal: 8
     },
+    inputSmall:{
+        height: 40,
+        borderColor: "gray",
+        borderWidth: 1,
+        marginTop: 4,
+        paddingHorizontal: 8
+    },
     label:{
-        paddingLeft: 20,
+        paddingLeft: 0,
         color: "black",
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: "bold",
+        marginBottom: 4,
     }
 });

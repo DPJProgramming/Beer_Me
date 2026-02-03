@@ -71,6 +71,10 @@ export default function BeerDetails( {onClose: closeBeerDetails, beer}: Props) {
                         <Text style={detailStyles.value}>{beer.brewery || '(Tap Edit to add)'}</Text>
                     </View>
                     <View style={detailStyles.infoRow}>
+                        <Text style={detailStyles.label}>Date Added:</Text>
+                        <Text style={detailStyles.value}>{beer.date || '(Tap Edit to add)'}</Text>
+                    </View>
+                    <View style={detailStyles.infoRow}>
                         <Text style={detailStyles.label}>Location:</Text>
                         <Text style={detailStyles.value}>{beer.location || '(Tap Edit to add)'}</Text>
                     </View>

@@ -11,7 +11,6 @@ type Props = {
 }
 
 export default function BeerDetails( {onClose: closeBeerDetails, beer}: Props) {
-    console.log(beer);
     if(!beer) {
         return null;
     }
@@ -74,6 +73,10 @@ export default function BeerDetails( {onClose: closeBeerDetails, beer}: Props) {
                         <Text style={detailStyles.label}>Date Added:</Text>
                         <Text style={detailStyles.value}>{beer.date || '(Tap Edit to add)'}</Text>
                     </View>
+                    {beer.updatedDate && <View style={detailStyles.infoRow}>
+                        <Text style={detailStyles.label}>Last Updated:</Text>
+                        <Text style={detailStyles.value}>{beer.updatedDate}</Text>
+                    </View>}
                     <View style={detailStyles.infoRow}>
                         <Text style={detailStyles.label}>Location:</Text>
                         <Text style={detailStyles.value}>{beer.location || '(Tap Edit to add)'}</Text>

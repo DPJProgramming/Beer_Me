@@ -42,7 +42,7 @@ const addBeer = async (beer) => {
                                 beer.location, 
                                 beer.rating, 
                                 beer.image, 
-                                beer.date
+                                beer.date,
     );
     
     return {...result, image: beer.image, id: result.lastInsertRowid};
@@ -73,21 +73,21 @@ const editBeer = (beer) => {
                         location = ?, 
                         rating = ?, 
                         image = ?, 
-                        date = ?
+                        updatedDate = ?
 
                     WHERE id = ?`;
 
         const prepare = db.prepare(query);
         result = prepare.run(
-                                    beer.name, 
-                                    beer.type, 
-                                    beer.brewery, 
-                                    beer.description, 
-                                    beer.location, 
-                                    beer.rating, 
-                                    beer.image, 
-                                    beer.date, 
-                                    beer.id
+                                beer.name, 
+                                beer.type, 
+                                beer.brewery, 
+                                beer.description, 
+                                beer.location, 
+                                beer.rating, 
+                                beer.image, 
+                                beer.updatedDate,
+                                beer.id
                                 );
         
         const image = beer.image || existingImage;
@@ -97,7 +97,7 @@ const editBeer = (beer) => {
             fs.promises.unlink(`./public/img/${image}`);
         }
 
-        return {...result, image: image};
+        return {...result, image: image, updatedDate: beer.updatedDate};
     }
     else{
         const query = 
@@ -110,7 +110,7 @@ const editBeer = (beer) => {
                         description = ?, 
                         location = ?, 
                         rating = ?,  
-                        date = ?
+                        updatedDate = ?
 
                     WHERE id = ?`;
 
@@ -122,10 +122,10 @@ const editBeer = (beer) => {
                                     beer.description, 
                                     beer.location, 
                                     beer.rating, 
-                                    beer.date, 
+                                    beer.updatedDate, 
                                     beer.id
                                 );
-        return result;
+        return {...result, updatedDate: beer.updatedDate};
     }
 }
 

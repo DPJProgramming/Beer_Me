@@ -29,6 +29,8 @@ const addBeer = async (req, res) => {
         const beer = req.body;
         beer.image = req.file ? req.file.filename : "placeholder.png";
 
+        beer.date = new Date().toLocaleDateString('en-CA');
+        
         const result = await datalayer.addBeer(beer);
         res.send(result);
     }
@@ -42,14 +44,12 @@ const editBeer = (req, res) => {
     }
     else {
         const beer = req.body;
+        beer.updatedDate = new Date().toLocaleDateString('en-CA');
 
         //check if new image is provided
         if(req.file){
             beer.image = req.file.filename;
         }
-
-        //update date to current date
-        beer.date = new Date().toISOString().split('T')[0]; 
 
         //send to datalayer
         const result = datalayer.editBeer(beer);
@@ -57,7 +57,8 @@ const editBeer = (req, res) => {
         //handle response
         if(!result){
             res.status(404).send('Update Beer failed');
-        } else {
+        } 
+        else {
             res.send(result);
         }
     }

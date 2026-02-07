@@ -13,4 +13,6 @@ SELECT * FROM beers
 --ALTER TABLE beers ADD COLUMN deleted INTEGER NOT NULL DEFAULT 0;
 --ALTER TABLE beers ADD COLUMN updatedDate TEXT CHECK(updatedDate GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]');
 --ALTER TABLE beers ADD COLUMN subType TEXT;
+UPDATE beers SET date = NULL WHERE id IN (34, 13, 49);
+
 

@@ -60,6 +60,7 @@ export default function myBeers() {
         setIsEditVisible(true);
     }
     const closeUpdateBeer = () => {
+        setIsDetailsVisible(false);
         setIsEditVisible(false);
     }
     const openBeerDetails = (beer: BeerType) => {

@@ -59,8 +59,10 @@ export function BeerListProvider({children}:  {children: React.ReactNode}) {
     };
 
     const editBeer = async (updatedBeer: BeerType, onClose: () => void) => {
+        //update in database
         const beerModified = await updateInDb(updatedBeer);
 
+        //update on frontend
         if (!beerModified) {
             console.error("Failed to update beer in database from beerListContext");
             return;
@@ -69,6 +71,7 @@ export function BeerListProvider({children}:  {children: React.ReactNode}) {
             const newBeerList = beers.map((beer) => {
                     if (beer.id === updatedBeer.id) {
                         updatedBeer.image = beerModified.image ?? beer.image;
+                        updatedBeer.updatedDate = beerModified.updatedDate ?? beer.updatedDate;
                         return { ...beer, ...updatedBeer };
                     }
                     else{
@@ -142,7 +145,6 @@ export function BeerListProvider({children}:  {children: React.ReactNode}) {
 };
 
 async function addBeertoDb(beer: BeerType) {
-    const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
     const formData = compileBeerData(beer);
 
     //send to backend
@@ -150,7 +152,6 @@ async function addBeertoDb(beer: BeerType) {
 };
 
 async function updateInDb(beer: BeerType) {
-    const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
     const formData = compileBeerData(beer);
     formData.append('id', beer.id.toString());
 
@@ -171,7 +172,6 @@ function compileBeerData(beer: BeerType) {
     formData.append('brewery', beer.brewery ?? '');
     formData.append('description', beer.description ?? '');
     formData.append('location', beer.location ?? '');
-    formData.append('date', new Date().toISOString().split('T')[0]);
 
     //handle image upload only when a new local image is selected
     const isLocalImage = beer.image && (beer.image.startsWith('file:') || beer.image.startsWith('content:'));
@@ -213,7 +213,6 @@ async function sendRequest(requestMethod: string, endpoint: string, message: str
     }
 
     const response = await fetch(`${host}/${endpoint}`, config);
-    console.log('Response:', response);
     const isSuccessful = onSuccess(response, message);
 
     if(isSuccessful){

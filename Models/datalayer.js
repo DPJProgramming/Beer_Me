@@ -22,28 +22,15 @@ const getTopBeers = async () => {
 }
 
 const addBeer = async (beer) => {
-    const query = `INSERT INTO beers (
-                                        name, 
-                                        type, 
-                                        brewery, 
-                                        description, 
-                                        location, 
-                                        rating, 
-                                        image, 
-                                        date
-                                    )
+    const query = `INSERT INTO beers ( name, type, brewery, description, 
+                                       location, rating, image, date
+                                     )
                    VALUES (?,?,?,?,?,?,?,?)`;
     const prepare = db.prepare(query)
-    const result = prepare.run(
-                                beer.name, 
-                                beer.type, 
-                                beer.brewery, 
-                                beer.description, 
-                                beer.location, 
-                                beer.rating, 
-                                beer.image, 
-                                beer.date,
-    );
+    const result = prepare.run( 
+                                beer.name, beer.type, beer.brewery, beer.description, 
+                                beer.location, beer.rating, beer.image, beer.date,
+                              );
     
     return {...result, image: beer.image, id: result.lastInsertRowid};
 }
@@ -64,31 +51,16 @@ const editBeer = (beer) => {
     if(beer.image){
         const existingImage = getImageById(beer.id);
 
-        const query = `UPDATE beers 
-                    SET 
-                        name = ?, 
-                        type = ?, 
-                        brewery = ?, 
-                        description = ?, 
-                        location = ?, 
-                        rating = ?, 
-                        image = ?, 
-                        updatedDate = ?
-
-                    WHERE id = ?`;
+        const query =  `UPDATE beers 
+                        SET name = ?, type = ?, brewery = ?, description = ?, location = ?, 
+                           rating = ?, image = ?, updatedDate = ?
+                        WHERE id = ?`;
 
         const prepare = db.prepare(query);
-        result = prepare.run(
-                                beer.name, 
-                                beer.type, 
-                                beer.brewery, 
-                                beer.description, 
-                                beer.location, 
-                                beer.rating, 
-                                beer.image, 
-                                beer.updatedDate,
-                                beer.id
-                                );
+        result = prepare.run( 
+                                beer.name, beer.type, beer.brewery, beer.description, 
+                                beer.location, beer.rating, beer.image, beer.updatedDate,beer.id
+                            );
         
         const image = beer.image || existingImage;
 
@@ -100,31 +72,16 @@ const editBeer = (beer) => {
         return {...result, image: image, updatedDate: beer.updatedDate};
     }
     else{
-        const query = 
-                    `UPDATE 
-                        beers 
-                    SET 
-                        name = ?, 
-                        type = ?, 
-                        brewery = ?, 
-                        description = ?, 
-                        location = ?, 
-                        rating = ?,  
-                        updatedDate = ?
-
-                    WHERE id = ?`;
+        const query = `UPDATE beers 
+                       SET name = ?, type = ?, brewery = ?, description = ?, location = ?, 
+                           rating = ?, updatedDate = ?
+                       WHERE id = ?`;
 
         const prepare = db.prepare(query);
-        result = prepare.run(
-                                    beer.name, 
-                                    beer.type, 
-                                    beer.brewery, 
-                                    beer.description, 
-                                    beer.location, 
-                                    beer.rating, 
-                                    beer.updatedDate, 
-                                    beer.id
-                                );
+        result = prepare.run( 
+                                beer.name, beer.type, beer.brewery, beer.description, 
+                                beer.location, beer.rating, beer.updatedDate, beer.id
+                            );
         return {...result, updatedDate: beer.updatedDate};
     }
 }
@@ -133,7 +90,7 @@ const deleteBeer = async (id) => {
     //handle deletion of image file
     const image = getImageById(id);
 
-    if(image != 'placeholder.png'){ 
+    if(image && image != 'placeholder.png'){ 
         await fs.promises.unlink(`./public/img/${image}`);
     }
 

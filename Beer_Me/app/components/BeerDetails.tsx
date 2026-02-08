@@ -15,7 +15,7 @@ export default function BeerDetails( {onClose: closeBeerDetails, beer}: Props) {
         return null;
     }
     const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
-    const {removeBeerContext, beers} = useBeerList(); //expose context for beer list
+    const {deleteBeerContext: deleteBeerContext, beers} = useBeerList(); //expose context for beer list
     const [isEditVisible, setIsEditVisible] = useState(false);
     const [beerState, setBeerState] = useState<BeerType>(beer);
 
@@ -27,7 +27,7 @@ export default function BeerDetails( {onClose: closeBeerDetails, beer}: Props) {
     }, [beers, beer.id]);
 
     const deleteBeer = (id: number) => {
-        removeBeerContext(id);
+        deleteBeerContext(id);
         closeBeerDetails();
     }
     const openUpdateBeer = () => {

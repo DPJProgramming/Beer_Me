@@ -8,7 +8,7 @@ type BeerListContextType = {
     setBeers: (beers: BeerType[]) => void;
     setOriginalBeers: (beers: BeerType[]) => void;
     addBeerContext: (beer: BeerType, onClose: () => void) => Promise<void>;
-    removeBeerContext: (id: number) => Promise<void>;
+    deleteBeerContext: (id: number) => Promise<void>;
     editBeerContext: (beer: BeerType, onClose: () => void) => Promise<void>;
     sortBeerContext: (sortBy: string) => void;
     searchBeerContext: (searchFor: string) => void;
@@ -45,7 +45,7 @@ export function BeerListProvider({children}:  {children: React.ReactNode}) {
         }
     };
 
-    const removeBeer = async (id: number) => {
+    const deleteBeer = async (id: number) => {
         //delete from db
         const beerDeleted = await deleteInDb(id);
         if (!beerDeleted) {
@@ -134,7 +134,7 @@ export function BeerListProvider({children}:  {children: React.ReactNode}) {
                                             setBeers, 
                                             setOriginalBeers,
                                             addBeerContext: addBeer, 
-                                            removeBeerContext: removeBeer, 
+                                            deleteBeerContext: deleteBeer, 
                                             editBeerContext: editBeer, 
                                             sortBeerContext: sortBeer,
                                             searchBeerContext: searchBeers

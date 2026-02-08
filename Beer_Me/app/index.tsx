@@ -8,7 +8,7 @@ import BeerDetails from "./components/BeerDetails";
 
 //fetch beers from backend
 export default function myBeers() {
-    const {beers, setBeers, removeBeerContext, sortBeerContext, searchBeerContext, setOriginalBeers} = useBeerList(); //expose context for beer list
+    const {beers, setBeers, deleteBeerContext: removeBeerContext, sortBeerContext, searchBeerContext, setOriginalBeers} = useBeerList(); //expose context for beer list
     const [isEditVisible, setIsEditVisible] = useState(false);
     const [isDetailsVisible, setIsDetailsVisible] = useState(false);
     const [selectedBeer, setSelectedBeer] = useState<BeerType | undefined>(undefined);

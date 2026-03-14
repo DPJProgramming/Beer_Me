@@ -8,7 +8,7 @@ type BeerListContextType = {
     setBeers: (beers: BeerType[]) => void;
     setOriginalBeers: (beers: BeerType[]) => void;
     addBeerContext: (beer: BeerType, onClose: () => void) => Promise<void>;
-    deleteBeerContext: (id: number) => Promise<void>;
+    deleteBeerContext: (id: number) => Promise<{ok: boolean; message: string}>;
     editBeerContext: (beer: BeerType, onClose: () => void) => Promise<void>;
     sortBeerContext: (sortBy: string) => void;
     searchBeerContext: (searchFor: string) => void;
@@ -45,17 +45,26 @@ export function BeerListProvider({children}:  {children: React.ReactNode}) {
         }
     };
 
-    const deleteBeer = async (id: number) => {
+    const deleteBeer = async (idd: number) => {
+        const id = 1;
         //delete from db
-        const beerDeleted = await deleteInDb(id);
-        if (!beerDeleted) {
-            console.error("Failed to delete beer from database from beerListContext");
-            return;
+        if(!id || id <= 0 || isNaN(id)){
+            console.log("invalid id in beerListContext");
+            return { ok: false, message: "Invalid beer ID" };        
         }
+        else{
+            const beerDeleted = await sendRequest('post', `deleteBeer/${id}`, 'delete');
 
-        const newBeers = beers.filter((beer) => beer.id !== id);
-        setBeers(newBeers);
-        setOriginalBeers(newBeers);
+            if(!beerDeleted.ok){
+                console.log("Failed to delete beer from database from beerListContext: " + beerDeleted.message);
+                return { ok: false, message: beerDeleted.message };
+            }
+
+            const newBeers = beers.filter((beer) => beer.id !== id);
+            setBeers(newBeers);
+            setOriginalBeers(newBeers);
+            return { ok: true, message: "Beer deleted successfully" };
+        }
     };
 
     const editBeer = async (updatedBeer: BeerType, onClose: () => void) => {
@@ -158,10 +167,6 @@ async function updateInDb(beer: BeerType) {
     return await sendRequest('post', 'editBeer', 'update', formData);
 }
 
-async function deleteInDb(id: number) {
-    return sendRequest('post', `deleteBeer/${id}`, 'delete');
-}
-
 function compileBeerData(beer: BeerType) {
     //append data from addBeer form
     const formData = new FormData();
@@ -190,16 +195,16 @@ function compileBeerData(beer: BeerType) {
     return formData;
 }
 
-function onSuccess(response: Response, message: string) {
-    if (response && response.ok) {
-        alert(`${message} beer successfull`);
-        return true;
-    }
-    else{
-        alert(`Failed to ${message} beer`);
-        return false;
-    }
-}
+// function onSuccess(response: Response, message: string) {
+//     if (response && response.ok) {
+//         alert(`${message} beer successfull`);
+//         return true;
+//     }
+//     else{
+//         alert(`Failed to ${message} beer`);
+//         return false;
+//     }
+// }
 
 async function sendRequest(requestMethod: string, endpoint: string, message: string, data?: FormData) {
     const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
@@ -212,16 +217,20 @@ async function sendRequest(requestMethod: string, endpoint: string, message: str
         config.body = data;
     }
 
-    const response = await fetch(`${host}/${endpoint}`, config);
-    const isSuccessful = onSuccess(response, message);
-
-    if(isSuccessful){
-        const responseData = await response.json();
-        console.log('Response Data:', responseData);
-        return responseData;
+    try{
+        const response = await fetch(`${host}/${endpoint}`, config);
+        if(response && response.ok && response.status === 200){
+            return await response.json();
+        }
+        else{
+            const errorMessage = await JSON.parse(await response.text());
+            return { ok: false, message: errorMessage.message || `Failed to ${message} beer` };
+        }
     }
-    else{
-        return;
+    catch(error){
+        console.log("caught on try catch in send request");
+        console.log(error);
+        return { ok: false, message: `Failed to ${message} beer` };
     }
 }
 export default BeerListProvider;

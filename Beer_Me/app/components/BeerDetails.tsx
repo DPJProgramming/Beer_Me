@@ -26,9 +26,14 @@ export default function BeerDetails( {onClose: closeBeerDetails, beer}: Props) {
         }
     }, [beers, beer.id]);
 
-    const deleteBeer = (id: number) => {
-        deleteBeerContext(id);
-        closeBeerDetails();
+    const deleteBeer = async (id: number) => {
+        const deleted = await deleteBeerContext(id);
+        if(deleted.ok) {
+            closeBeerDetails();
+        }
+        else{
+            alert("Failed to delete beer: " + deleted.message);
+        }
     }
     const openUpdateBeer = () => {
         setIsEditVisible(true);

@@ -45,15 +45,14 @@ export function BeerListProvider({children}:  {children: React.ReactNode}) {
         }
     };
 
-    const deleteBeer = async (idd: number) => {
-        const id = 1;
+    const deleteBeer = async (id: number) => {
         //delete from db
         if(!id || id <= 0 || isNaN(id)){
             console.log("invalid id in beerListContext");
             return { ok: false, message: "Invalid beer ID" };        
         }
         else{
-            const beerDeleted = await sendRequest('post', `deleteBeer/${id}`, 'delete');
+            const beerDeleted = await sendRequest('delete', `deleteBeer/${id}`, 'delete');
 
             if(!beerDeleted.ok){
                 console.log("Failed to delete beer from database from beerListContext: " + beerDeleted.message);

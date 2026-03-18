@@ -87,14 +87,15 @@ const editBeer = (beer) => {
 }
 
 const deleteBeer = async (id) => {
+    //fetchimage file
+    const image = getImageById(id);
+
     //delete beer from database
     const query = `DELETE FROM beers WHERE id = ?`;
-
     const prepare = db.prepare(query);
     const runDelete = prepare.run(id);
 
-    //handle deletion of image file
-    const image = getImageById(id);
+    //remove image file if it's not the placeholder
     if(image && image != 'placeholder.png'){ 
         try{
             await fs.promises.unlink(`./public/img/${image}`);
@@ -105,11 +106,11 @@ const deleteBeer = async (id) => {
     }
 
     if(runDelete.changes === 0){
-        console.log(`No beer found with id ${id} to delete.`);
+        console.log(`No beer found with id ${id}`);
         return {ok: false, message: 'Beer not found'};
     }
 
-    return {ok: true};
+    return {ok: true, message: 'Beer deleted successfully'};
 }
 
 const getImageById = (id) => {

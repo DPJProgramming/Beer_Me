@@ -164,9 +164,9 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
         }
     })
 
-    const submitForm = () => {
-        onSubmit({ id, image, name, type, subType, rating, brewery, description, location});
-    };
+    const submitForm = form.handleSubmit((data: BeerType) => {
+        onSubmit(data);
+    });
     
     return (
         <View style={formStyles.mainContainer}>
@@ -246,7 +246,7 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
             </ScrollView>
 
             <View style={formStyles.footer}>
-                <Pressable style={[formStyles.button, formStyles.accept]} onPress={form.handleSubmit(submitForm)}>
+                <Pressable style={[formStyles.button, formStyles.accept]} onPress={submitForm}>
                     <Text style={formStyles.accept}>{accept}</Text>
                 </Pressable>
 

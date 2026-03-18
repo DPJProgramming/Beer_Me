@@ -66,7 +66,19 @@ const editBeer = (req, res) => {
 
 const deleteBeer = async (req, res) => {
     const id = req.params.id;
+
+    if(!id || id < 1 || isNaN(id)){
+        res.status(400).send({ok: false, message: 'Invalid beer id'});
+        return;
+    }
+
     const response = await datalayer.deleteBeer(id);
+
+    if(!response.ok){
+        res.status(404).send({ok: false, message: response.message || 'Cannot delete from database'});
+        return;
+    }
+
     res.send(response);
 }
 

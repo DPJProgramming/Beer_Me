@@ -8,8 +8,9 @@ import BeerDetails from "./components/BeerDetails";
 
 //fetch beers from backend
 export default function myBeers() {
-    const {beers, setBeers, removeBeerContext, sortBeerContext, searchBeerContext, setOriginalBeers} = useBeerList(); //expose context for beer list
+    const {beers, setBeers, deleteBeerContext: deleteBeerContext, sortBeerContext, searchBeerContext, setOriginalBeers} = useBeerList(); //expose context for beer list
     const [isEditVisible, setIsEditVisible] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [isDetailsVisible, setIsDetailsVisible] = useState(false);
     const [selectedBeer, setSelectedBeer] = useState<BeerType | undefined>(undefined);
     const [sortOpen, setSortOpen] = useState(false);
@@ -52,8 +53,16 @@ export default function myBeers() {
     }
 
     // use context for CRUD operations
-    const deleteBeer = (id: number) => {
-        removeBeerContext(id);
+    const deleteBeer = async (id: number) => {
+        setIsDeleting(true);
+        const deleted = await deleteBeerContext(id);
+        if(deleted.ok) {
+            closeBeerDetails();
+        }
+        else{
+            alert("Failed to delete beer: " + deleted.message);
+        }
+        setIsDeleting(false);
     }
     const openUpdateBeer = (beer: BeerType) => {
         setSelectedBeer(beer);
@@ -135,7 +144,7 @@ export default function myBeers() {
                                         <Text>{beer.brewery}</Text>
                                     </View>
                                 </Pressable>
-                                <Button title="Delete" onPress={() => confirmDelete(beer.id)}/>
+                                <Button title="Delete" disabled={isDeleting} onPress={() => {if (!isDeleting) confirmDelete(beer.id)}}/>
                                 <Button title="Change" onPress={() => openUpdateBeer(beer)}/>
                             </View>
                         );

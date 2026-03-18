@@ -15,8 +15,9 @@ export default function BeerDetails( {onClose: closeBeerDetails, beer}: Props) {
         return null;
     }
     const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
-    const {removeBeerContext, beers} = useBeerList(); //expose context for beer list
+    const {deleteBeerContext: deleteBeerContext, beers} = useBeerList(); //expose context for beer list
     const [isEditVisible, setIsEditVisible] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [beerState, setBeerState] = useState<BeerType>(beer);
 
     useEffect(() => {
@@ -26,9 +27,17 @@ export default function BeerDetails( {onClose: closeBeerDetails, beer}: Props) {
         }
     }, [beers, beer.id]);
 
-    const deleteBeer = (id: number) => {
-        removeBeerContext(id);
-        closeBeerDetails();
+    const deleteBeer = async (id: number) => {
+        setIsDeleting(true);
+        const deleted = await deleteBeerContext(id);
+        if(deleted.ok) {
+            closeBeerDetails();
+        }
+        else{
+            alert("Failed to delete beer: " + deleted.message);
+            setIsDeleting(false);
+        }
+
     }
     const openUpdateBeer = () => {
         setIsEditVisible(true);
@@ -102,7 +111,7 @@ export default function BeerDetails( {onClose: closeBeerDetails, beer}: Props) {
 
                     </View>
                     <View style={detailStyles.button}>
-                        <Button title="Delete" onPress={() => confirmDelete(beerState.id)} color="#d32f2f"/>
+                        <Button title="Delete" disabled={isDeleting} onPress={() => {if (!isDeleting) confirmDelete(beerState.id)}} color="#d32f2f"/>
                     </View>
                 </View>
                 

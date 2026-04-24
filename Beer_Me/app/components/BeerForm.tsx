@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { TextInput, StyleSheet, Text, ScrollView, Image, Alert, View, Pressable} from 'react-native';
 import * as ImagePicker from "expo-image-picker";
-import {useForm} from 'react-hook-form';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { BeerType } from '../types/types';
 
@@ -149,24 +148,22 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
         }
     };
 
-    const form = useForm<BeerType>({
-        defaultValues: {
-            id: initialValues?.id ?? 0,
-            image: initialValues?.image ?? undefined,
-            name: initialValues?.name ?? "", 
-            type: initialValues?.type ?? "",
-            subType: initialValues?.subType ?? "",
-            rating: initialValues?.rating ?? 0,
-            brewery: initialValues?.brewery ?? "",
-            description: initialValues?.description ?? "",
-            location: initialValues?.location ?? "",
-            date: initialValues?.date ?? "I dont have a date :(",
-        }
-    })
+    const submitForm = () => {
+        const payload: BeerType = {
+            id,
+            name: name.trim(),
+            type: type || "",
+            subType: subType || "",
+            rating,
+            brewery: brewery.trim(),
+            description: description.trim(),
+            location: location.trim(),
+            image,
+            date: initialValues?.date ?? new Date().toISOString().split('T')[0],
+        };
 
-    const submitForm = form.handleSubmit((data: BeerType) => {
-        onSubmit(data);
-    });
+        onSubmit(payload);
+    };
     
     return (
         <View style={formStyles.mainContainer}>

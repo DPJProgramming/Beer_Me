@@ -2,10 +2,10 @@ import fs from 'fs';
 import Database from 'better-sqlite3';
 
 //without logging SQL queries
-const db = new Database('./data/beer.db');
+const db = new Database('./data/beers.db');
 
 //to log all SQL queries when in development mode
-//const db = new Database('./data/beer.db', { verbose: console.log });
+//const db = new Database('./data/beers.db', { verbose: console.log });
 
 const getAllBeers = async () => {
     const result = db.prepare('SELECT * FROM beers ORDER BY date DESC');

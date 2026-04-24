@@ -31,14 +31,25 @@ export function BeerListProvider({children}:  {children: React.ReactNode}) {
     const addBeer = async (newBeer: BeerType, onClose: () => void) => {
         const newBeerAdded = await addBeertoDb(newBeer);
 
-        if (!newBeerAdded) {
-            console.error("Failed to add beer to database from beerListContext");
+        if (!newBeerAdded || newBeerAdded.ok === false || newBeerAdded.id === undefined || newBeerAdded.id === null) {
+            const reason = newBeerAdded?.message ? `: ${newBeerAdded.message}` : "";
+            console.error(`Failed to add beer to database from beerListContext${reason}`);
             return;
         }
         else{
-            newBeer.id = newBeerAdded.id;
-            newBeer.image = newBeerAdded.image;
-            const newBeerList = [newBeer, ...beers];
+            const parsedId = Number(newBeerAdded.id);
+            if (Number.isNaN(parsedId)) {
+                console.error("Invalid beer ID returned from addBeer API");
+                return;
+            }
+
+            const beerToInsert: BeerType = {
+                ...newBeer,
+                id: parsedId,
+                image: newBeerAdded.image ?? newBeer.image,
+            };
+
+            const newBeerList = [beerToInsert, ...beers];
             setBeers(newBeerList);
             setOriginalBeers(newBeerList);
             onClose();
@@ -219,11 +230,23 @@ async function sendRequest(requestMethod: string, endpoint: string, message: str
     try{
         const response = await fetch(`${host}/${endpoint}`, config);
         if(response && response.ok && response.status === 200){
-            return await response.json();
+            const payload = await response.json();
+
+            if (payload && typeof payload === 'object' && !('ok' in payload)) {
+                return { ...payload, ok: true };
+            }
+
+            return payload;
         }
         else{
-            const errorMessage = await JSON.parse(await response.text());
-            return { ok: false, message: errorMessage.message || `Failed to ${message} beer` };
+            const responseText = await response.text();
+            try {
+                const errorMessage = JSON.parse(responseText);
+                return { ok: false, message: errorMessage.message || `Failed to ${message} beer` };
+            }
+            catch {
+                return { ok: false, message: responseText || `Failed to ${message} beer` };
+            }
         }
     }
     catch(error){

@@ -26,6 +26,7 @@ export default function myBeers() {
 
     //const host = `http://localhost:3000`; //for web
     const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
+    const displayBeers = beers.filter((beer) => beer && beer.id !== undefined && beer.id !== null);
 
     //fetch beers on initial load
     useEffect(() => {        
@@ -121,8 +122,8 @@ export default function myBeers() {
             <View style={homeStyles.beerListContainer}>
                 <FlatList
                     numColumns={2}
-                    data={beers}
-                    keyExtractor={(item) => item.id.toString()}
+                    data={displayBeers}
+                    keyExtractor={(item, index) => (item.id !== undefined && item.id !== null ? item.id.toString() : `missing-id-${index}`)}
                     renderItem={({item: beer}) => {
                         const beerType = (beer.subType && beer.subType.trim().length) ? beer.subType : beer.type;
 

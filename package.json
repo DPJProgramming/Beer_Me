@@ -15,7 +15,7 @@
     "url": ""
   },
   "scripts": {
-    "postintall": "node setup.js", 
+    "postinstall": "node setup.js", 
     "start": "nodemon server.js"
   },
   "dependencies": {

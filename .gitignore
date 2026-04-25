@@ -4,7 +4,6 @@ node_modules
 # database files for sqlite
 data/*
 !data/.gitkeep
-db/dbMaint.sql
 
 # Ignore all images in the public/img directory to save space
 public/img

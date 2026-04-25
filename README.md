@@ -7,7 +7,7 @@ A fast, easy-to-use mobile app for tracking and organizing beers you’ve tried.
 - In new terminal enter 'npm install'
 - Open second terminal
 - Navigate to frontend directory ('cd Beer_Me')
-- Enter npm install
+- Enter 'npm install' to install dependencies
 - Create new file named .env in frontend directory (Beer_Me/Beer_Me)
 - Copy variable from .env.example into .env with your ip
 - In first terminal enter 'npm run start'

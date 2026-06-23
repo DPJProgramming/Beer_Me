@@ -14,7 +14,7 @@ type BeerListContextType = {
     searchBeerContext: (searchFor: string) => void;
 };
 
-export const BeerListContext = createContext<BeerListContextType | undefined>(undefined); 
+export const BeerListContext = createContext<BeerListContextType | undefined>(undefined);
 
 export function useBeerList() {
     const context = useContext(BeerListContext);

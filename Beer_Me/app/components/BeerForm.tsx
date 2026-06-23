@@ -1,25 +1,19 @@
 import { useState } from 'react';
-import { TextInput, StyleSheet, Text, ScrollView, Image, Alert, View, Pressable} from 'react-native';
+import { TextInput, StyleSheet, Text, ScrollView, Image, Alert, View, Pressable } from 'react-native';
 import * as ImagePicker from "expo-image-picker";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { BeerType } from '../types/types';
 
-
-async function getImage() : Promise<string | undefined> {
+async function getImage(): Promise<string | undefined> {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
     if (status !== "granted") {
-        Alert.alert("Cant upload image");
-    } 
-    else {
-        const result = await ImagePicker.launchImageLibraryAsync();
-
-        if (!result.canceled) {
-            return result.assets[0].uri;
-        }
+        Alert.alert("Permission Needed", "Photo library access is required to upload a beer photo.");
+        return undefined;
     }
+    const result = await ImagePicker.launchImageLibraryAsync();
+    if (!result.canceled) return result.assets[0].uri;
     return undefined;
-};
+}
 
 type BeerFormProps = {
     onSubmit: (values: BeerType) => void;
@@ -31,16 +25,16 @@ type BeerFormProps = {
 export default function BeerForm({ onSubmit, onClose, initialValues, accept }: BeerFormProps) {
     const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
 
-    const [id, setId] = useState<number>(initialValues?.id ?? 0);
+    const [id] = useState<number>(initialValues?.id ?? 0);
     const [rating, setRating] = useState<number>(initialValues?.rating ?? 0);
     const [brewery, setBrewery] = useState<string>(initialValues?.brewery ?? "");
     const [description, setDescription] = useState<string>(initialValues?.description ?? "");
     const [location, setLocation] = useState<string>(initialValues?.location ?? "");
-    const [image, setImage] = useState<string | undefined>(initialValues?.image ? `${host}/img/${initialValues.image}` : undefined);
+    const [image, setImage] = useState<string | undefined>(
+        initialValues?.image ? `${host}/img/${initialValues.image}` : undefined
+    );
     const [name, setName] = useState<string>(initialValues?.name ?? "");
     const [type, setType] = useState<string>(initialValues?.type ?? "");
-    //const [date, setDate] = useState<string>(initialValues?.date ?? new Date().toISOString().split('T')[0]);
-
     const [typeOpen, setTypeOpen] = useState(false);
     const [typeItems, setTypeItems] = useState([
         { label: "India Pale Ale (IPA)", value: "India Pale Ale (IPA)" },
@@ -51,105 +45,78 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
         { label: "Brown Ale", value: "Brown Ale" },
         { label: "Porter", value: "Porter" },
         { label: "Stout", value: "Stout" },
-        { label: "Other", value: "Other" }
+        { label: "Other", value: "Other" },
     ]);
-
     const [subType, setSubType] = useState<string>(initialValues?.subType ?? "");
     const [subTypeOpen, setSubTypeOpen] = useState(false);
     const [subTypeItems, setSubTypeItems] = useState<{ label: string; value: string }[]>([]);
 
     const setSubTypeValues = (selectedType: string) => {
-        let items: { label: string; value: string }[] = [];
-
-        switch (selectedType) {
-            case "India Pale Ale (IPA)":
-                items = [
-                    { label: "Hazy / New England IPA", value: "Hazy / New England IPA" },
-                    { label: "West Coast IPA", value: "West Coast IPA" },
-                    { label: "Session IPA", value: "Session IPA" },
-                    { label: "Other", value: "Other" }
-                ];
-                break;
-            case "Pale Ale":
-                items = [
-                    { label: "American Pale Ale (APA)", value: "American Pale Ale (APA)" },
-                    { label: "English Pale Ale", value: "English Pale Ale" },
-                    { label: "Blonde Ale", value: "Blonde Ale" },
-                    { label: "Other", value: "Other" },
-                ];
-                break;
-            case "Wheat Beer":
-                items = [
-                    { label: "Hefeweizen", value: "Hefeweizen" },
-                    { label: "American Wheat Beer", value: "American Wheat Beer" },
-                    { label: "Belgian Witbier", value: "Belgian Witbier" },
-                    { label: "Other", value: "Other" }
-                ];
-                break;
-            case "Lager":
-                items = [
-                    { label: "Pilsner", value: "Pilsner" },
-                    { label: "Amber/Vienna", value: "Amber/Vienna" },
-                    { label: "Helles", value: "Helles" },
-                    { label: "Märzen / Oktoberfest", value: "Märzen / Oktoberfest" },
-                    { label: "Doppelbock", value: "Doppelbock" },
-                    { label: "Other", value: "Other" },
-                ]
-                break;
-            case "Amber/Red Ale":
-                items = [
-                    { label: "Irish Red Ale", value: "Irish Red Ale" },
-                    { label: "American Amber Ale", value: "American Amber Ale" },
-                    { label: "Other", value: "Other" },
-                ];
-                break;
-            case "Brown Ale":
-                items = [
-                    { label: "American Brown Ale", value: "American Brown Ale" },
-                    { label: "English Brown Ale", value: "English Brown Ale" },
-                    { label: "Dark Brown/Belgian Ale", value: "Dark Brown/Belgian Ale" },
-                    { label: "Other", value: "Other" }
-                ];
-                break;
-            case "Porter":
-                items = [
-                    { label: "English Porter", value: "English Porter" },
-                    { label: "Robust Porter", value: "Robust Porter" },
-                    { label: "Baltic Porter", value: "Baltic Porter" },
-                    { label: "Other", value: "Other" }
-                ];
-                break;
-            case "Stout":
-                items = [
-                    { label: "Dry Stout", value: "Dry Stout" },
-                    { label: "Milk Stout (Sweet Stout)", value: "Milk Stout (Sweet Stout)" },
-                    { label: "Imperial Stout", value: "Imperial Stout" },
-                    { label: "Other", value: "Other" }
-                ];
-                break;
-            case "Other":
-                items = [
-                    { label: "Other", value: "Other" },
-                ];
-                break;
-            default:
-                items = [];
-        }
-
-        setSubTypeItems(items);
+        const map: Record<string, { label: string; value: string }[]> = {
+            "India Pale Ale (IPA)": [
+                { label: "Hazy / New England IPA", value: "Hazy / New England IPA" },
+                { label: "West Coast IPA", value: "West Coast IPA" },
+                { label: "Session IPA", value: "Session IPA" },
+                { label: "Other", value: "Other" },
+            ],
+            "Pale Ale": [
+                { label: "American Pale Ale (APA)", value: "American Pale Ale (APA)" },
+                { label: "English Pale Ale", value: "English Pale Ale" },
+                { label: "Blonde Ale", value: "Blonde Ale" },
+                { label: "Other", value: "Other" },
+            ],
+            "Wheat Beer": [
+                { label: "Hefeweizen", value: "Hefeweizen" },
+                { label: "American Wheat Beer", value: "American Wheat Beer" },
+                { label: "Belgian Witbier", value: "Belgian Witbier" },
+                { label: "Other", value: "Other" },
+            ],
+            "Lager": [
+                { label: "Pilsner", value: "Pilsner" },
+                { label: "Amber/Vienna", value: "Amber/Vienna" },
+                { label: "Helles", value: "Helles" },
+                { label: "Märzen / Oktoberfest", value: "Märzen / Oktoberfest" },
+                { label: "Doppelbock", value: "Doppelbock" },
+                { label: "Other", value: "Other" },
+            ],
+            "Amber/Red Ale": [
+                { label: "Irish Red Ale", value: "Irish Red Ale" },
+                { label: "American Amber Ale", value: "American Amber Ale" },
+                { label: "Other", value: "Other" },
+            ],
+            "Brown Ale": [
+                { label: "American Brown Ale", value: "American Brown Ale" },
+                { label: "English Brown Ale", value: "English Brown Ale" },
+                { label: "Dark Brown/Belgian Ale", value: "Dark Brown/Belgian Ale" },
+                { label: "Other", value: "Other" },
+            ],
+            "Porter": [
+                { label: "English Porter", value: "English Porter" },
+                { label: "Robust Porter", value: "Robust Porter" },
+                { label: "Baltic Porter", value: "Baltic Porter" },
+                { label: "Other", value: "Other" },
+            ],
+            "Stout": [
+                { label: "Dry Stout", value: "Dry Stout" },
+                { label: "Milk Stout (Sweet Stout)", value: "Milk Stout (Sweet Stout)" },
+                { label: "Imperial Stout", value: "Imperial Stout" },
+                { label: "Other", value: "Other" },
+            ],
+            "Other": [{ label: "Other", value: "Other" }],
+        };
+        setSubTypeItems(map[selectedType] ?? []);
         setSubType("");
     };
 
     const pickImage = async () => {
-        const image = await getImage();
-        
-        if(image){
-            setImage(image);
-        }
+        const picked = await getImage();
+        if (picked) setImage(picked);
     };
 
+    const collapseDropdowns = () => { setSubTypeOpen(false); setTypeOpen(false); };
+
     const submitForm = () => {
-        const payload: BeerType = {
+        onSubmit({
             id,
             name: name.trim(),
             type: type || "",
@@ -160,186 +127,303 @@ export default function BeerForm({ onSubmit, onClose, initialValues, accept }: B
             location: location.trim(),
             image,
             date: initialValues?.date ?? new Date().toISOString().split('T')[0],
-        };
-
-        onSubmit(payload);
+        });
     };
-    
-    return (
-        <View style={formStyles.mainContainer}>
-            <ScrollView>
-                <Pressable onPress={() => {setSubTypeOpen(false); setTypeOpen(false)}}>
-                    <Text style={formStyles.label}>Name *</Text>
-                    <TextInput style={formStyles.input} placeholder="Name" value={name} onChangeText={setName} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}}/>
 
-                    <Text style={formStyles.label}>Photo</Text>
-                    <View style={formStyles.imageContainer}>
-                        {image && (
-                            <Image style={formStyles.image} source={{uri: image}} />
+    return (
+        <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+                <Pressable onPress={collapseDropdowns}>
+
+                    {/* Name */}
+                    <Text style={styles.label}>Beer Name <Text style={styles.required}>*</Text></Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="e.g. Hazy Afternoon"
+                        placeholderTextColor="#C4A882"
+                        value={name}
+                        onChangeText={setName}
+                        onFocus={collapseDropdowns}
+                    />
+
+                    {/* Photo */}
+                    <Text style={styles.label}>Photo</Text>
+                    <View style={styles.photoRow}>
+                        {image ? (
+                            <Image source={{ uri: image }} style={styles.photoThumb} />
+                        ) : (
+                            <View style={styles.photoPlaceholder}>
+                                <Text style={styles.photoPlaceholderText}>🍺</Text>
+                            </View>
                         )}
-                        <View style={formStyles.buttonColumn}>
-                            <Pressable style={formStyles.imageButton} onPress={pickImage}>
-                                <Text style={{ color: "white" }}>
-                                    {image && "Change photo" || "Choose a photo"}
+                        <View style={styles.photoButtons}>
+                            <Pressable style={styles.photoBtn} onPress={pickImage}>
+                                <Text style={styles.photoBtnText}>
+                                    {image ? '📷  Change' : '📷  Choose Photo'}
                                 </Text>
                             </Pressable>
                             {image && (
-                                <Pressable onPress={() => setImage(undefined)} style={formStyles.removeButton}>
-                                    <Text style={{ color: "white" }}>Remove photo</Text>
-                                </Pressable>                    
+                                <Pressable style={[styles.photoBtn, styles.removeBtn]} onPress={() => setImage(undefined)}>
+                                    <Text style={styles.photoBtnText}>✕  Remove</Text>
+                                </Pressable>
                             )}
                         </View>
                     </View>
 
-                    <Text style={formStyles.label}>Type</Text>
-                    <View style={{ zIndex: 2 }}>
+                    {/* Type */}
+                    <Text style={styles.label}>Type</Text>
+                    <View style={{ zIndex: 20 }}>
                         <DropDownPicker
                             open={typeOpen}
                             value={type}
                             items={typeItems}
                             setOpen={setTypeOpen}
                             setValue={setType}
-                            onChangeValue={(selectedType) => setSubTypeValues(selectedType as string)}
+                            onChangeValue={(v) => setSubTypeValues(v as string)}
                             setItems={setTypeItems}
-                            placeholder="What type of beer is this?"
+                            placeholder="What style is this brew?"
                             listMode="SCROLLVIEW"
-                            style={[formStyles.input, { zIndex: 3 }]}
-                            labelStyle={{ textAlign: 'center' }}
-                            listItemLabelStyle={{ textAlign: 'center' }}
-                            onOpen={() => {setSubTypeOpen(false);}}
+                            style={styles.picker}
+                            dropDownContainerStyle={styles.pickerDropdown}
+                            labelStyle={styles.pickerLabel}
+                            listItemLabelStyle={styles.pickerLabel}
+                            placeholderStyle={{ color: '#C4A882' }}
+                            onOpen={() => setSubTypeOpen(false)}
                         />
                     </View>
 
-                    <Text style={formStyles.label}>Sub-Type</Text>
-                    <View style={{ zIndex: 1 }} onFocus={() => {setTypeOpen(false)}}>
-                        <DropDownPicker 
+                    {/* Sub-Type */}
+                    <Text style={styles.label}>Sub-Type</Text>
+                    <View style={{ zIndex: 10 }}>
+                        <DropDownPicker
                             open={subTypeOpen}
                             value={subType}
                             items={subTypeItems}
                             setOpen={setSubTypeOpen}
                             setValue={setSubType}
                             setItems={setSubTypeItems}
-                            placeholder="If this beer has a sub-type, select it"
+                            placeholder="Select a sub-type (optional)"
                             listMode="SCROLLVIEW"
-                            style={[formStyles.input, { zIndex: 2 }]}
-                            labelStyle={{ textAlign: 'center' }}
-                            listItemLabelStyle={{ textAlign: 'center' }}
-                            onOpen={() => {setTypeOpen(false);}}
+                            style={styles.picker}
+                            dropDownContainerStyle={styles.pickerDropdown}
+                            labelStyle={styles.pickerLabel}
+                            listItemLabelStyle={styles.pickerLabel}
+                            placeholderStyle={{ color: '#C4A882' }}
+                            onOpen={() => setTypeOpen(false)}
                         />
                     </View>
 
-                    <Text style={formStyles.label}>Rating *</Text>
-                    <TextInput style={formStyles.input} placeholder="Rating" value={rating.toString()} keyboardType="numeric" onChangeText={(text) => setRating(Number(text))} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
+                    {/* Rating */}
+                    <Text style={styles.label}>Rating <Text style={styles.required}>*</Text></Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="0 – 5"
+                        placeholderTextColor="#C4A882"
+                        value={rating.toString()}
+                        keyboardType="numeric"
+                        onChangeText={(t) => setRating(Number(t))}
+                        onFocus={collapseDropdowns}
+                    />
 
-                    <Text style={formStyles.label}>Brewery</Text>
-                    <TextInput style={formStyles.input} placeholder="Brewery" value={brewery} onChangeText={setBrewery} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
+                    {/* Brewery */}
+                    <Text style={styles.label}>Brewery</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Who brewed it?"
+                        placeholderTextColor="#C4A882"
+                        value={brewery}
+                        onChangeText={setBrewery}
+                        onFocus={collapseDropdowns}
+                    />
 
-                    <Text style={formStyles.label}>Description</Text>
-                    <TextInput style={formStyles.input} placeholder="Description" value={description} multiline onChangeText={setDescription} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
-                
-                    <Text style={formStyles.label}>Location</Text>
-                    <TextInput style={formStyles.input} placeholder="Location" value={location} onChangeText={setLocation} onFocus={() => {setSubTypeOpen(false); setTypeOpen(false)}} />
+                    {/* Description */}
+                    <Text style={styles.label}>Tasting Notes</Text>
+                    <TextInput
+                        style={[styles.input, styles.multilineInput]}
+                        placeholder="How does it taste? What do you love about it?"
+                        placeholderTextColor="#C4A882"
+                        value={description}
+                        multiline
+                        numberOfLines={4}
+                        onChangeText={setDescription}
+                        onFocus={collapseDropdowns}
+                    />
+
+                    {/* Location */}
+                    <Text style={styles.label}>Location</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Where did you have this?"
+                        placeholderTextColor="#C4A882"
+                        value={location}
+                        onChangeText={setLocation}
+                        onFocus={collapseDropdowns}
+                    />
                 </Pressable>
             </ScrollView>
 
-            <View style={formStyles.footer}>
-                <Pressable style={[formStyles.button, formStyles.accept]} onPress={submitForm}>
-                    <Text style={formStyles.accept}>{accept}</Text>
+            {/* Footer */}
+            <View style={styles.footer}>
+                <Pressable style={[styles.footerBtn, styles.cancelBtn]} onPress={onClose}>
+                    <Text style={styles.cancelBtnText}>Cancel</Text>
                 </Pressable>
-
-                <Pressable style={[formStyles.button, formStyles.cancel]} onPress={onClose}>
-                    <Text style={formStyles.cancel}>Cancel</Text>
+                <Pressable style={[styles.footerBtn, styles.submitBtn]} onPress={submitForm}>
+                    <Text style={styles.submitBtnText}>{accept}</Text>
                 </Pressable>
             </View>
         </View>
     );
 }
 
-const formStyles = StyleSheet.create({
-    mainContainer:{
+const styles = StyleSheet.create({
+    container: {
         flex: 1,
-        width: "100%",
-        alignSelf: "center",
+        backgroundColor: '#FDF6EC',
     },
-    label:{
-        paddingLeft: 20,
-        color: "black",
-        fontSize: 16,
-        fontWeight: "bold",
-    },
-    input:{
-        alignSelf: "center",
-        height: 40,
-        width: "90%",
-        borderColor: "gray",
-        borderWidth: 1,
-        marginBottom: 25,
-        marginTop: 4,
-        paddingHorizontal: 8
-    },
-    image:{
-        width: 120,
-        height: 120,
-        borderRadius: 5,
-    },
-    imageContainer:{
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 12,
-        marginBottom: 20,
-        marginLeft: 20,
-    },
-    imageButton:{
-        alignSelf: "flex-start",
-        backgroundColor: "#007BFF",
-        padding: 10,
-        borderRadius: 5,
-        marginLeft: 20,
-        marginBottom: 20,
-    },
-    removeButton:{
-        alignSelf: "flex-start",
-        backgroundColor: "#ff4444",
-        padding: 10,
-        borderRadius: 5,
-        marginLeft: 20,
-        marginBottom: 20,
-    },
-    buttonColumn:{
-        flexDirection: "column",
-        gap: 8,
-        flex: 1,
-    },
-    footer:{
-        backgroundColor: "#cccaf6ff",
-        borderWidth: 2,
-        flexDirection: "row",
-        paddingVertical: 15,
+    scrollContent: {
         paddingHorizontal: 20,
-        alignItems: "center",
-        justifyContent: "space-between",
+        paddingTop: 20,
+        paddingBottom: 24,
     },
-    button:{
-        marginTop: 10,
-        marginBottom: 10,
+
+    // ── Field ─────────────────────────────────────────────────
+    label: {
+        fontSize: 12,
+        fontWeight: '800',
+        letterSpacing: 1.2,
+        color: '#A08060',
+        marginBottom: 6,
+        textTransform: 'uppercase',
+    },
+    required: {
+        color: '#E8604C',
+    },
+    input: {
+        backgroundColor: '#FFF',
+        borderWidth: 1.5,
+        borderColor: '#E8D5B7',
+        borderRadius: 12,
+        height: 46,
+        paddingHorizontal: 14,
+        fontSize: 15,
+        color: '#3D2B1F',
+        marginBottom: 20,
+    },
+    multilineInput: {
+        height: 100,
+        paddingTop: 12,
+        textAlignVertical: 'top',
+    },
+
+    // ── Photo ─────────────────────────────────────────────────
+    photoRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 14,
+        marginBottom: 20,
+    },
+    photoThumb: {
+        width: 100,
+        height: 100,
+        borderRadius: 14,
+        borderWidth: 2,
+        borderColor: '#E8D5B7',
+    },
+    photoPlaceholder: {
+        width: 100,
+        height: 100,
+        borderRadius: 14,
+        backgroundColor: '#F5EAD8',
+        borderWidth: 2,
+        borderColor: '#E8D5B7',
+        borderStyle: 'dashed',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    photoPlaceholderText: {
+        fontSize: 36,
+    },
+    photoButtons: {
         flex: 1,
-        height: 44,
-        borderRadius: 8,
-        alignItems: "center",
-        justifyContent: "center",
-        marginHorizontal: 6,
+        gap: 8,
     },
-    cancel:{
-        backgroundColor: "#ff0000ff",
-        fontSize: 20,
-        color: "#FFF",
+    photoBtn: {
+        backgroundColor: '#5B8FA8',
+        borderRadius: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 14,
+        alignItems: 'center',
     },
-    accept:{
-        backgroundColor: "#00c51aff",
-        fontSize: 20,
-        color: "#FFF",
+    removeBtn: {
+        backgroundColor: '#E8604C',
     },
-    types:{
+    photoBtnText: {
+        color: '#FFF',
+        fontSize: 13,
+        fontWeight: '700',
+    },
+
+    // ── Pickers ───────────────────────────────────────────────
+    picker: {
+        borderWidth: 1.5,
+        borderColor: '#E8D5B7',
+        borderRadius: 12,
+        backgroundColor: '#FFF',
+        height: 46,
+        minHeight: 46,
+        marginBottom: 20,
+    },
+    pickerDropdown: {
+        borderWidth: 1.5,
+        borderColor: '#E8D5B7',
+        borderRadius: 12,
+        backgroundColor: '#FFF',
+    },
+    pickerLabel: {
+        fontSize: 14,
+        color: '#3D2B1F',
+    },
+
+    // ── Footer ────────────────────────────────────────────────
+    footer: {
+        flexDirection: 'row',
+        gap: 12,
+        paddingHorizontal: 20,
+        paddingVertical: 16,
+        backgroundColor: '#F5EAD8',
+        borderTopWidth: 2,
+        borderTopColor: '#E8D5B7',
+    },
+    footerBtn: {
         flex: 1,
-    }
+        height: 50,
+        borderRadius: 14,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    cancelBtn: {
+        backgroundColor: '#FFF',
+        borderWidth: 2,
+        borderColor: '#E8D5B7',
+        shadowColor: 'transparent',
+    },
+    cancelBtnText: {
+        fontSize: 15,
+        fontWeight: '700',
+        color: '#A08060',
+    },
+    submitBtn: {
+        backgroundColor: '#5B8FA8',
+        shadowColor: '#5B8FA8',
+    },
+    submitBtnText: {
+        fontSize: 15,
+        fontWeight: '800',
+        color: '#FFF',
+        letterSpacing: 0.3,
+    },
 });

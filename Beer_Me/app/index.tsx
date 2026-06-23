@@ -1,14 +1,13 @@
 import {useEffect, useState} from "react";
-import { StyleSheet, View, FlatList, Modal, Button, Pressable, Image, Text, Alert, TextInput} from "react-native";
+import { StyleSheet, View, FlatList, Modal, Pressable, Image, Text, Alert, TextInput} from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 import {useBeerList} from "./context/beerListContext";
 import AddBeer from "./components/AddBeer";
 import { BeerType } from "./types/types";
 import BeerDetails from "./components/BeerDetails";
 
-//fetch beers from backend
 export default function myBeers() {
-    const {beers, setBeers, deleteBeerContext: deleteBeerContext, sortBeerContext, searchBeerContext, setOriginalBeers} = useBeerList(); //expose context for beer list
+    const {beers, setBeers, deleteBeerContext, sortBeerContext, searchBeerContext, setOriginalBeers} = useBeerList();
     const [isEditVisible, setIsEditVisible] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isDetailsVisible, setIsDetailsVisible] = useState(false);
@@ -16,221 +15,296 @@ export default function myBeers() {
     const [sortOpen, setSortOpen] = useState(false);
     const [sortBy, setSortBy] = useState<string>("date desc");
     const [sortOptions] = useState([
-        { label: "name", value: "name" },
-        { label: "rating", value: "rating" },
-        { label: "date asc", value: "date asc" },
-        { label: "date desc", value: "date desc" },
-        { label: "type", value: "type" },
-        { label: "brewery", value: "brewery" },
+        { label: "Name", value: "name" },
+        { label: "Rating", value: "rating" },
+        { label: "Date ↑", value: "date asc" },
+        { label: "Date ↓", value: "date desc" },
+        { label: "Type", value: "type" },
+        { label: "Brewery", value: "brewery" },
     ]);
 
-    //const host = `http://localhost:3000`; //for web
     const host = process.env.EXPO_PUBLIC_IP ?? 'no IP found';
     const displayBeers = beers.filter((beer) => beer && beer.id !== undefined && beer.id !== null);
 
-    //fetch beers on initial load
-    useEffect(() => {        
+    useEffect(() => {
         (async () => {
-            try{
+            try {
                 const beersData = await getBeers(host);
                 setBeers(beersData);
                 setOriginalBeers(beersData);
-            }
-            catch(err){
+            } catch(err) {
                 console.error(err);
-                console.log("Failed to fetch beers");
             }
-        })()
+        })();
     }, []);
 
     const confirmDelete = (id: number) => {
-        Alert.alert(
-            "Confirm Deletion",
-            "Are you sure you want to recycle this beer?", [
-                { text: "Cancel", style: "cancel", onPress: () => {} },
-                { text: "Delete", style: "destructive", onPress: () => deleteBeer(id) }
-            ]
-        );              
-    }
+        Alert.alert("Recycle This Beer?", "This brew will be gone forever.", [
+            { text: "Keep It", style: "cancel" },
+            { text: "Recycle", style: "destructive", onPress: () => deleteBeer(id) }
+        ]);
+    };
 
-    // use context for CRUD operations
     const deleteBeer = async (id: number) => {
         setIsDeleting(true);
         const deleted = await deleteBeerContext(id);
-        if(deleted.ok) {
-            closeBeerDetails();
-        }
-        else{
-            alert("Failed to delete beer: " + deleted.message);
-        }
+        if (deleted.ok) closeBeerDetails();
+        else alert("Failed to delete beer: " + deleted.message);
         setIsDeleting(false);
-    }
-    const openUpdateBeer = (beer: BeerType) => {
-        setSelectedBeer(beer);
-        setIsEditVisible(true);
-    }
-    const closeUpdateBeer = () => {
-        setIsDetailsVisible(false);
-        setIsEditVisible(false);
-    }
-    const openBeerDetails = (beer: BeerType) => {
-        setSelectedBeer(beer);
-        setIsDetailsVisible(true);
-    }
-    const closeBeerDetails = () => {
-        setIsDetailsVisible(false);
-    }
+    };
 
-    //use context for search and sort
+    const openUpdateBeer = (beer: BeerType) => { setSelectedBeer(beer); setIsEditVisible(true); };
+    const closeUpdateBeer = () => { setIsDetailsVisible(false); setIsEditVisible(false); };
+    const openBeerDetails = (beer: BeerType) => { setSelectedBeer(beer); setIsDetailsVisible(true); };
+    const closeBeerDetails = () => setIsDetailsVisible(false);
+
     const onSearch = (term: string) => {
+        setSortOpen(false); // always collapse dropdown when typing
         searchBeerContext(term);
-    }
-    const onSort = () => {
-        sortBeerContext(sortBy);
-    }
+    };
+
+    const onSort = (val: string | null) => {
+        if (val) sortBeerContext(val);
+    };
 
     return (
-        <View style={homeStyles.mainContainer}>
-            <View style={homeStyles.searchSortContainer}>
-                <View style={homeStyles.searchSortColumn}>
-                    <Text style={homeStyles.label}>Sort</Text>
-                    <View style={{ zIndex: 5000 }}>
-                        <DropDownPicker
-                            open={sortOpen}
-                            value={sortBy}
-                            items={sortOptions}
-                            setOpen={setSortOpen}
-                            setValue={setSortBy}
-                            listMode="SCROLLVIEW"
-                            style={[homeStyles.inputSmall, { zIndex: 5000 }]}
-                            dropDownContainerStyle={{ zIndex: 5000, elevation: 5000 }}
-                            labelStyle={{ textAlign: 'center' }}
-                            listItemLabelStyle={{ textAlign: 'center' }}
-                            onChangeValue={onSort}
-                        />
-                    </View>
+        <View style={styles.mainContainer}>
+
+            {/* ── Control bar — zIndex must be high so dropdown floats above FlatList ── */}
+            <View style={styles.controlBar}>
+
+                <View style={styles.controlGroup}>
+                    <Text style={styles.controlLabel}>SORT BY</Text>
+                    <DropDownPicker
+                        open={sortOpen}
+                        value={sortBy}
+                        items={sortOptions}
+                        setOpen={setSortOpen}
+                        setValue={setSortBy}
+                        listMode="SCROLLVIEW"
+                        style={styles.pickerStyle}
+                        dropDownContainerStyle={styles.dropdownContainer}
+                        labelStyle={styles.pickerLabel}
+                        listItemLabelStyle={styles.pickerLabel}
+                        onChangeValue={onSort}
+                        arrowIconStyle={{ tintColor: '#5B8FA8' }}
+                        zIndex={3000}
+                        zIndexInverse={1000}
+                    />
                 </View>
-                <View style={homeStyles.searchSortColumn}>
-                    <Text style={homeStyles.label}>Search</Text>
-                    <View style={{zIndex: 1}}>
-                        <TextInput style={homeStyles.inputSmall}
-                            onChangeText={onSearch}
-                        ></TextInput>
-                    </View>
+
+                <View style={styles.divider} />
+
+                <View style={styles.controlGroup}>
+                    <Text style={styles.controlLabel}>SEARCH</Text>
+                    <TextInput
+                        style={styles.searchInput}
+                        onChangeText={onSearch}
+                        onFocus={() => setSortOpen(false)}
+                        placeholder="brewery, name, type..."
+                        placeholderTextColor="#C4A882"
+                    />
                 </View>
             </View>
-            <View style={homeStyles.beerListContainer}>
+
+            {/* ── Beer Grid — lower z-order so the dropdown overlaps it ── */}
+            <View style={styles.listWrapper}>
                 <FlatList
                     numColumns={2}
                     data={displayBeers}
-                    keyExtractor={(item, index) => (item.id !== undefined && item.id !== null ? item.id.toString() : `missing-id-${index}`)}
-                    renderItem={({item: beer}) => {
-                        const beerType = (beer.subType && beer.subType.trim().length) ? beer.subType : beer.type;
-
-                        return(
-                            <View style={homeStyles.beerContainer}>
-                                <Pressable onPress={() => openBeerDetails(beer)}>
-                                    <View>
-                                        <Text>{beer.name}</Text>
-                                        <Text>{beer.rating}</Text>
-                                    </View>
-                                    <View>
-                                        <Image 
-                                            source={{uri: `${host}/img/${beer.image}`}} 
-                                            style={homeStyles.image}
-                                        />
-                                    </View>
-                                    <View>
-                                        <Text>{beerType}</Text>
-                                        <Text>{beer.brewery}</Text>
-                                    </View>
-                                </Pressable>
-                                <Button title="Delete" disabled={isDeleting} onPress={() => {if (!isDeleting) confirmDelete(beer.id)}}/>
-                                <Button title="Change" onPress={() => openUpdateBeer(beer)}/>
+                    columnWrapperStyle={styles.row}
+                    keyExtractor={(item, index) =>
+                        item.id != null ? item.id.toString() : `missing-${index}`
+                    }
+                    contentContainerStyle={styles.listContent}
+                    onScrollBeginDrag={() => setSortOpen(false)}
+                    keyboardShouldPersistTaps="handled"
+                    renderItem={({ item: beer }) => (
+                        <Pressable
+                            style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+                            onPress={() => { setSortOpen(false); openBeerDetails(beer); }}
+                        >
+                            <View style={styles.imageWrapper}>
+                                <Image
+                                    source={{ uri: `${host}/img/${beer.image}` }}
+                                    style={styles.cardImage}
+                                />
+                                {/* Rating badge — TOP LEFT */}
+                                <View style={styles.ratingBadge}>
+                                    <Text style={styles.ratingText}>★ {beer.rating}</Text>
+                                </View>
                             </View>
-                        );
-                    }}>
-                </FlatList>
-                <Modal
-                    animationType="slide" 
-                    visible={selectedBeer !== undefined && isEditVisible} 
-                    onRequestClose={closeUpdateBeer}
-                >
-                    {selectedBeer && <AddBeer onClose={closeUpdateBeer} beer={selectedBeer}/>}
-                </Modal>
-                <Modal
-                    animationType="slide" 
-                    visible={selectedBeer !== undefined && isDetailsVisible} 
-                    onRequestClose={closeBeerDetails}
-                >
-                    {selectedBeer && <BeerDetails onClose={closeBeerDetails} beer={selectedBeer}/>}
-                </Modal>
+
+                            <View style={styles.cardFooter}>
+                                <Text style={styles.beerName} numberOfLines={1}>{beer.name}</Text>
+                                <Text style={styles.beerBrewery} numberOfLines={1}>
+                                    {beer.brewery || '—'}
+                                </Text>
+                            </View>
+                        </Pressable>
+                    )}
+                />
             </View>
-        </View> 
+
+            <Modal animationType="slide" visible={selectedBeer !== undefined && isEditVisible} onRequestClose={closeUpdateBeer}>
+                {selectedBeer && <AddBeer onClose={closeUpdateBeer} beer={selectedBeer} />}
+            </Modal>
+            <Modal animationType="slide" visible={selectedBeer !== undefined && isDetailsVisible} onRequestClose={closeBeerDetails}>
+                {selectedBeer && <BeerDetails onClose={closeBeerDetails} beer={selectedBeer} />}
+            </Modal>
+        </View>
     );
 }
 
-async function getBeers(host : string){
-    const response = await fetch(`${host}/allBeers`, {method: 'GET'});
-    const beers = await response.json();
-
-    return beers;
+async function getBeers(host: string) {
+    const response = await fetch(`${host}/allBeers`, { method: 'GET' });
+    return response.json();
 }
 
-const homeStyles = StyleSheet.create({
-    mainContainer:{
+const styles = StyleSheet.create({
+    mainContainer: {
         flex: 1,
+        backgroundColor: '#FDF6EC',
     },
-    searchSortContainer:{
+
+    // ── Control bar ──────────────────────────────────────────
+    controlBar: {
         flexDirection: 'row',
-        paddingHorizontal: 12,
-        paddingVertical: 12,
+        backgroundColor: '#FFF8F0',
+        paddingHorizontal: 16,
+        paddingTop: 14,
+        paddingBottom: 12,
+        borderBottomWidth: 2,
+        borderBottomColor: '#E8D5B7',
         gap: 12,
+        alignItems: 'flex-start',
+        // High zIndex so the open dropdown renders above FlatList on Android too
+        zIndex: 999,
+        elevation: 999,
+        shadowColor: '#C4A882',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.18,
+        shadowRadius: 4,
     },
-    searchSortColumn:{
+    controlGroup: {
         flex: 1,
     },
-    beerListContainer:{
+    controlLabel: {
+        fontSize: 10,
+        fontWeight: '800',
+        letterSpacing: 1.5,
+        color: '#5B8FA8',
+        marginBottom: 6,
+    },
+    divider: {
+        width: 1,
+        backgroundColor: '#E8D5B7',
+        height: 46,
+        alignSelf: 'center',
+        marginTop: 16,
+    },
+    pickerStyle: {
+        borderColor: '#E8D5B7',
+        borderWidth: 1.5,
+        borderRadius: 10,
+        backgroundColor: '#FFF',
+        height: 42,
+        minHeight: 42,
+    },
+    dropdownContainer: {
+        borderColor: '#E8D5B7',
+        borderWidth: 1.5,
+        borderRadius: 10,
+        backgroundColor: '#FFF',
+    },
+    pickerLabel: {
+        fontSize: 13,
+        color: '#6B4F2A',
+        textAlign: 'center',
+    },
+    searchInput: {
+        height: 42,
+        borderWidth: 1.5,
+        borderColor: '#E8D5B7',
+        borderRadius: 10,
+        backgroundColor: '#FFF',
+        paddingHorizontal: 12,
+        fontSize: 13,
+        color: '#6B4F2A',
+    },
+
+    // ── List ─────────────────────────────────────────────────
+    listWrapper: {
         flex: 1,
+        zIndex: 1,
+    },
+    listContent: {
         padding: 12,
+        paddingBottom: 120,
     },
-    beerContainer:{
-        flex: 1,
-        borderWidth: 1,
-        borderColor: 'black',
-        borderStyle: 'solid',
-        padding: 12,
-        marginBottom: 12,
-        borderRadius: 8,
-        backgroundColor: '#fff'
+    row: {
+        justifyContent: 'space-between',
+        marginBottom: 14,
     },
-    image: {
-        width: 100,
-        height: 100,
-        borderRadius: 8,
+
+    // ── Card ─────────────────────────────────────────────────
+    card: {
+        width: '48.5%',
+        backgroundColor: '#FFF',
+        borderRadius: 16,
+        overflow: 'hidden',
+        borderWidth: 2.5,
+        borderColor: '#FFFFFF',          // bright white border
+        shadowColor: '#8A6030',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.22,
+        shadowRadius: 8,
+        elevation: 5,
     },
-    input:{
-        alignSelf: "center",
-        height: 40,
-        width: "90%",
-        borderColor: "gray",
-        borderWidth: 1,
-        marginBottom: 25,
-        marginTop: 4,
-        paddingHorizontal: 8
+    cardPressed: {
+        opacity: 0.88,
+        transform: [{ scale: 0.975 }],
     },
-    inputSmall:{
-        height: 40,
-        borderColor: "gray",
-        borderWidth: 1,
-        marginTop: 4,
-        paddingHorizontal: 8
+    imageWrapper: {
+        position: 'relative',
     },
-    label:{
-        paddingLeft: 0,
-        color: "black",
-        fontSize: 14,
-        fontWeight: "bold",
-        marginBottom: 4,
-    }
+    cardImage: {
+        width: '100%',
+        aspectRatio: 1,
+        backgroundColor: '#F5EAD8',
+    },
+    ratingBadge: {
+        position: 'absolute',
+        top: 8,
+        left: 8,
+        backgroundColor: 'rgba(18,10,4,0.76)',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 20,
+        borderWidth: 1.5,
+        borderColor: '#E8604C',
+    },
+    ratingText: {
+        color: '#FF6B4A',
+        fontSize: 12,
+        fontWeight: '800',
+        letterSpacing: 0.4,
+    },
+    cardFooter: {
+        paddingHorizontal: 10,
+        paddingTop: 8,
+        paddingBottom: 10,
+        backgroundColor: '#FFFAF4',
+    },
+    beerName: {
+        fontSize: 13,
+        fontWeight: '700',
+        color: '#3D2B1F',
+        marginBottom: 2,
+    },
+    beerBrewery: {
+        fontSize: 11,
+        color: '#5B8FA8',
+        fontWeight: '500',
+    },
 });

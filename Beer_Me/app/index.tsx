@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import { StyleSheet, View, FlatList, Modal, Pressable, Image, Text, Alert, TextInput} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import DropDownPicker from 'react-native-dropdown-picker';
 import {useBeerList} from "./context/beerListContext";
 import AddBeer from "./components/AddBeer";
@@ -7,6 +8,7 @@ import { BeerType } from "./types/types";
 import BeerDetails from "./components/BeerDetails";
 
 export default function myBeers() {
+    const insets = useSafeAreaInsets();
     const {beers, setBeers, deleteBeerContext, sortBeerContext, searchBeerContext, setOriginalBeers} = useBeerList();
     const [isEditVisible, setIsEditVisible] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -68,7 +70,7 @@ export default function myBeers() {
     };
 
     return (
-        <View style={styles.mainContainer}>
+        <View style={[styles.mainContainer, { paddingTop: insets.top }]}>
 
             {/* ── Control bar — zIndex must be high so dropdown floats above FlatList ── */}
             <View style={styles.controlBar}>

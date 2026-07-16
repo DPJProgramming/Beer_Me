@@ -2,17 +2,27 @@ import { Stack } from "expo-router";
 import {Modal, View, StyleSheet} from "react-native";
 import { useState} from "react";
 import BeerMeButton from "./components/BeerMeButton";
+import RecycleBinButton from "./components/RecycleBinButton";
 import AddBeer from "./components/AddBeer";
 import { BeerListProvider } from "./context/beerListContext";
+import RecycleBin from "./components/RecycleBin";
 
 export default function RootLayout() {
-    const [isFormVisible, setIsFormVisible] = useState(false);
+    const [isAddFormVisible, setIsAddFormVisible] = useState(false);
+    const [isRecylceBinVisible, setIsRecylceBinVisible] = useState(false);
     
     const openAddBeer = () => {
-        setIsFormVisible(true);
+        setIsAddFormVisible(true);
     }
     const closeAddBeer = () => {
-        setIsFormVisible(false);
+        setIsAddFormVisible(false);
+    }
+
+    const openRecycleBin = () => {
+        setIsRecylceBinVisible(true);
+    }
+    const closeRecycleBin = () => {
+        setIsRecylceBinVisible(false);
     }
 
     return (
@@ -24,12 +34,21 @@ export default function RootLayout() {
 
                 <Modal
                     animationType="slide" 
-                    visible={isFormVisible} 
+                    visible={isAddFormVisible} 
                     onRequestClose={closeAddBeer}
                 >
                     <AddBeer onClose={closeAddBeer} />
                 </Modal>
-                    <BeerMeButton onPress={openAddBeer}/>
+                <BeerMeButton onPress={openAddBeer}/>
+                <RecycleBinButton onPress={openRecycleBin}/>
+
+                    <Modal
+                    animationType="slide" 
+                    visible={isRecylceBinVisible} 
+                    onRequestClose={closeRecycleBin}
+                >
+                    <RecycleBin />
+                </Modal>
             </View>
         </BeerListProvider>
     );

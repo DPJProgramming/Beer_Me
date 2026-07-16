@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
-import {useBeerList} from "./context/beerListContext";
+import {useBeerList} from "../context/beerListContext";
 import { StyleSheet, View, FlatList, Modal, Pressable, Image, Text, Alert, TextInput} from "react-native";
-import { BeerType } from "./types/types";
+import { BeerType } from "../types/types";
 import DropDownPicker from 'react-native-dropdown-picker';
 
 
@@ -10,7 +10,7 @@ export default function recycleBin(){
     let [searchedBeers, setSearchedBeers] = useState<BeerType[]>([]);
     let [displayBeers, setDisplayBeers] = useState<BeerType[]>([]);
     const [beerToRestore, setBeerToRestore] = useState<BeerType | null>(null);
-    const [restoreBeer] = useBeerList;
+    //const [restoreBeer] = useBeerList;
     const [sortOpen, setSortOpen] = useState(false);
     const [sortBy, setSortBy] = useState<string>("date desc");
     const [sortOptions] = useState([
@@ -41,31 +41,31 @@ export default function recycleBin(){
         return response.json();
     }
 
-    const permantDelete(id: number){
-        const response = await fetch(`${host}/permanentDelete`, { method: 'DELETE' });
-        return response.json();
-        //setBeersInBin filtering
-    }
+    // const permantDelete(id: number, host: string){
+    //     const response = await fetch(`${host}/permanentDelete`, { method: 'DELETE' });
+    //     return response.json();
+    //     //setBeersInBin filtering
+    // }
 
-    const permantDeleteAll(){
-        const response = await fetch(`${host}/permanentDeleteAll`, { method: 'DELETE' });
-        return response.json();
-        //setBeersInBin filtering or set to []
-    }
+    // const permantDeleteAll(host: string){
+    //     const response = await fetch(`${host}/permanentDeleteAll`, { method: 'DELETE' });
+    //     return response.json();
+    //     //setBeersInBin filtering or set to []
+    // }
 
-    const confirmDelete = (id: number, messageOne: string, messageTwo: string) => {
-            Alert.alert(messageOne, messageTwo, [
-                { text: "Keep It", style: "cancel" },
-                { text: "Delete It", style: "destructive", onPress: () => permantDelete(id) }
-            ]);
-    };
+    // const confirmDelete = (id: number, messageOne: string, messageTwo: string) => {
+    //         Alert.alert(messageOne, messageTwo, [
+    //             { text: "Keep It", style: "cancel" },
+    //             { text: "Delete It", style: "destructive", onPress: () => permantDelete(id) }
+    //         ]);
+    // };
 
-    const confirmDeleteAll = (id: number, messageOne: string, messageTwo: string) => {
-            Alert.alert(messageOne, messageTwo, [
-                { text: "Keep", style: "cancel" },
-                { text: "Delete", style: "destructive", onPress: () => permantDeleteAll() }
-            ]);
-    };
+    // const confirmDeleteAll = (id: number, messageOne: string, messageTwo: string) => {
+    //         Alert.alert(messageOne, messageTwo, [
+    //             { text: "Keep", style: "cancel" },
+    //             { text: "Delete", style: "destructive", onPress: () => permantDeleteAll() }
+    //         ]);
+    // };
 
     const onSort = (val: string | null) => {
         if(val){

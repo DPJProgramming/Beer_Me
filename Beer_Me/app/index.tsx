@@ -41,7 +41,7 @@ export default function myBeers() {
     }, []);
 
     const confirmDelete = (id: number) => {
-        Alert.alert("Recycle This Beer?", "This brew will be gone forever.", [
+        Alert.alert("Recycle This Beer?", "",[
             { text: "Keep It", style: "cancel" },
             { text: "Recycle", style: "destructive", onPress: () => deleteBeer(id) }
         ]);
@@ -89,7 +89,6 @@ export default function myBeers() {
                         labelStyle={styles.pickerLabel}
                         listItemLabelStyle={styles.pickerLabel}
                         onChangeValue={onSort}
-                        arrowIconStyle={{ tintColor: '#5B8FA8' }}
                         zIndex={3000}
                         zIndexInverse={1000}
                     />
